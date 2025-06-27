@@ -20,28 +20,35 @@
         
         <!-- Filter Section -->
         <div class="filter-section">
-            <div class="row align-items-center gx-0">
-                <div class="col-md-3">
-                    <div class="d-flex align-items-center">
-                        <label class="m-3">Filter:</label>
-                        <input type="text" class="form-control" placeholder="Search" id="searchInput" autocomplete="off">
-                    </div>
-                </div>
-                <div class="col-md-9 ">
-                    <div class="d-flex align-items-center">
-                        <label class="mx-3">Categories:</label>
-                        <div class="d-flex flex-wrap gap-3">
-                        	<div th:each="cat : ${categories}">
-                        		<input class="form-check-input"
-                        			   type="checkbox"
-                        			   th:id="${cat.id}"
-                        			   th:value="${cat.id}"/>
-                        	    <label class="form-check-label ms-1" th:text="${cat.name}"></label>
-                        	</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <form method="get" th:action="@{/products/home}">
+	            <div class="row align-items-center gx-0">
+	                <div class="col-md-3">
+	                    <div class="d-flex align-items-center">
+	                        <label class="m-3">Filter:</label>
+	                        <input type="text" class="form-control" placeholder="Search Product" id="searchInput" name="search" th:value="${param.search}" autocomplete="off">
+	                    </div>
+	                </div>
+	                <div class="col-md-9 ">
+	                    <div class="d-flex align-items-center">
+	                        <label class="mx-3">Categories:</label>
+	                        <div class="d-flex flex-wrap gap-3">
+	                        	<div th:each="cat : ${categories}">
+	                        		<input class="form-check-input"
+	                        			   type="checkbox"
+	                        			   th:id="${cat.id}"
+	                        			   th:name="categories"
+	                        			   th:value="${cat.id}"
+	                        			   th:checked="${param.categories != null and #lists.contains(param.categories, cat.id.toString())}"/>
+	                        	    <label class="form-check-label ms-1" th:for="${cat.id}" th:text="${cat.name}"></label>
+	                        	</div>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="col-12 ms-3 mt-2">
+	                	<button type="submit" class="btn btn-outline-dark">Apply Filters</button>
+	                </div>
+	            </div>
+            </form>
         </div>
         
         <!-- Products List -->
