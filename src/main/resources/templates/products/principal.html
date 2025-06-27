@@ -20,16 +20,16 @@
         
         <!-- Filter Section -->
         <div class="filter-section">
-            <div class="row align-items-center">
+            <div class="row align-items-center gx-0">
                 <div class="col-md-3">
                     <div class="d-flex align-items-center">
                         <label class="m-3">Filter:</label>
                         <input type="text" class="form-control" placeholder="Search" id="searchInput" autocomplete="off">
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-9 ">
                     <div class="d-flex align-items-center">
-                        <label class="me-3">Categories:</label>
+                        <label class="mx-3">Categories:</label>
                         <div class="d-flex flex-wrap gap-3">
                         	<div th:each="cat : ${categories}">
                         		<input class="form-check-input"
