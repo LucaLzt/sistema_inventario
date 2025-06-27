@@ -44,8 +44,11 @@
 	                        </div>
 	                    </div>
 	                </div>
-	                <div class="col-12 ms-3 mt-2">
-	                	<button type="submit" class="btn btn-outline-dark">Apply Filters</button>
+	                <div class="col-12 mt-2">
+	                	<div class="d-flex flex-wrap gap-2 ms-3">
+					        <button type="submit" class="btn btn-outline-dark">Apply Filters</button>
+					        <a th:href="@{/products/home}" class="btn btn-outline-secondary">Reset</a>
+					    </div>
 	                </div>
 	            </div>
             </form>
@@ -108,24 +111,41 @@
 			            
             <!-- Pagination -->
             <nav aria-label="Products pagination" class="mt-3">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#">Previous</a>
-                    </li>
-                    <li class="page-item active">
-                        <a class="page-link" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">3</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
+            	<ul class="pagination justify-content-center">
+            		<!-- Previous Button -->
+            		<li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item" >
+            			<a th:href="@{/products/home(
+            						page=${currentPage-1},
+            						search=${param.search},
+            						categories=${param.categories}
+            						)}" 
+            				class="page-link" 
+            				tabindex="-1">Previous</a>
+            		</li>
+            		<!-- Number of Page -->
+            		<li class="page-item"
+            			th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+            			th:classappend="${i == currentPage} ? 'active'">
+            			<a class="page-link" 
+            			   th:href="@{/products/home(
+            			   			page=${i},
+            			   			search=${param.search},
+            			   			categories=${param.categories}
+            			   			)}"
+            			   th:text="${i + 1}">1</a>
+            		</li>
+            		<!-- Next Button -->
+            		<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+            			<a class="page-link" th:href="@{/products/home(
+            						page=${currentPage + 1},
+            						search=${param.search},
+            						categories=${param.categories}
+            						)}">Next</a>
+            		</li>
+            	</ul>
             </nav>
+            
+            
         </div>
         
     </div>

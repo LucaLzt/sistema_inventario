@@ -26,7 +26,7 @@ public class HomeController {
         model.addAttribute("lowStock", 23);
         model.addAttribute("outOfStock", 5);
         
-        // Lista vacía para evitar errores
+        // List of products to avoid errors
         model.addAttribute("productsStockLow", List.of());
         model.addAttribute("lastMovements", List.of());
         model.addAttribute("mostMovedProducts", List.of());
