@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.pruebas.sistema_inventario.entities.Product;
@@ -13,6 +14,7 @@ import com.pruebas.sistema_inventario.entities.Product;
 public interface ProductRepository extends JpaRepository<Product, Long>{
 	
 	boolean existsByCode(String code);
+	
 	List<Product> findByCategory_IdIn(List<Long> ids);
 	List<Product> findByNameContains(String name);
 	List<Product> findByNameContainsIgnoreCaseAndCategory_IdIn(String search, List<Long> categories);
@@ -20,5 +22,14 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
 	Page<Product> findByCategory_IdIn(List<Long> ids, Pageable pageable);
 	Page<Product> findByNameContains(String name, Pageable pageable);
 	Page<Product> findByNameContainsIgnoreCaseAndCategory_IdIn(String search, List<Long> categories, Pageable pageable);
+	
+	@Query("SELECT COUNT(p) FROM Product p WHERE p.stockActual <= p.stockMinimum")
+	long countLowStock();
+	
+	@Query("SELECT COUNT(p) FROM Product p WHERE p.stockActual = 0")
+	long countOutOfStock();
+	
+	@Query("SELECT p FROM Product p WHERE p.stockActual <= p.stockMinimum")
+	List<Product> findByLowStock();
 	
 }

@@ -7,11 +7,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.pruebas.sistema_inventario.service.interfaces.ProductService;
+
 import lombok.Builder;
 
 @Controller @Builder
 @RequestMapping("/")
 public class HomeController {
+	
+	private final ProductService productService;
 	
 	@GetMapping("/")
 	public String redirectToHome() {
@@ -21,13 +25,15 @@ public class HomeController {
 	@GetMapping("/home")
 	public String home(Model model) {
         // Principal Metrics
-        model.addAttribute("totalProducts", 1234);
-        model.addAttribute("stockAvailable", 8567);
-        model.addAttribute("lowStock", 23);
-        model.addAttribute("outOfStock", 5);
+        model.addAttribute("totalProducts", productService.countAll());
+        model.addAttribute("stockAvailable", productService.countStockAvailable());
+        model.addAttribute("lowStock", productService.countLowStock());
+        model.addAttribute("outOfStock", productService.countOutOfStock());
+        
+        // Alerts and Warnings
+        model.addAttribute("productsStockLow", productService.findByLowStock());
         
         // List of products to avoid errors
-        model.addAttribute("productsStockLow", List.of());
         model.addAttribute("lastMovements", List.of());
         model.addAttribute("mostMovedProducts", List.of());
 		

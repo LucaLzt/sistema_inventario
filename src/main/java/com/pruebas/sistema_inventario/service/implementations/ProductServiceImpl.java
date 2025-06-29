@@ -92,4 +92,37 @@ public class ProductServiceImpl implements ProductService {
 		return products.map(object -> modelMapper.map(object, ProductDTO.class));
 	}
 
+	@Override
+	public long countAll() {
+		return productRepository.count();
+	}
+
+	@Override
+	public long countStockAvailable() {
+		List<ProductDTO> products = findAll();
+		long total = 0;
+		for(ProductDTO product : products) {
+			total += product.getStockActual();
+		}
+		return total;
+	}
+
+	@Override
+	public long countLowStock() {
+		return productRepository.countLowStock();
+	}
+
+	@Override
+	public long countOutOfStock() {
+		return productRepository.countOutOfStock();
+	}
+
+	@Override
+	public List<ProductDTO> findByLowStock() {
+		return productRepository.findByLowStock()
+				.stream()
+				.map(object -> modelMapper.map(object, ProductDTO.class))
+				.collect(Collectors.toList());
+	}
+
 }

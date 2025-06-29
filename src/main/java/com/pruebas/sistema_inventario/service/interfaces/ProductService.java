@@ -19,6 +19,15 @@ public interface ProductService {
 	void deleteById(Long id);
 
 	Page<ProductDTO> findFiltered(String search, List<Long> categories, int page, int size);
+	
+	long countAll();
+	
+	long countStockAvailable();
 
+	long countLowStock();
+	
+	long countOutOfStock();
+	
+	List<ProductDTO> findByLowStock();
 	
 }
