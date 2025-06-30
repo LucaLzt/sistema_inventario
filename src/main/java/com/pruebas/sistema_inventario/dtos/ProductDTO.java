@@ -16,7 +16,7 @@ public class ProductDTO {
 	private BigDecimal priceUnit;
 	private Integer stockActual;
 	private Integer stockMinimum;
-	private boolean active;
+	@Builder.Default private boolean active = true;
 	private CategoryDTO category;
 	
 }
