@@ -8,7 +8,7 @@
 </head>
 <body>
 	<!-- Navbar -->
-	<div th:replace="~{fragments :: navbar('products')}"></div>
+	<div th:replace="~{fragments/navbar :: navbar('products')}"></div>
 	
 	<!-- Main Container -->
     <div class="main-container">
@@ -148,8 +148,8 @@
     </div>
     
 	<!-- Modals -->
-	<div th:replace="products/modals :: modal-add-product(${categories})"></div>
-	<div th:replace="products/modals :: modal-edit-product(${categories})"></div>
+	<div th:replace="~{fragments/product-modals :: modal-add-product(${categories})}"></div>
+	<div th:replace="~{fragments/product-modals :: modal-edit-product(${categories})}"></div>
     
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="/js/modalEditProduct.js"></script>
