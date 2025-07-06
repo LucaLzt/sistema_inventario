@@ -1,5 +1,6 @@
 package com.pruebas.sistema_inventario.service.implementations;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,10 +8,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.InventoryMovementDTO;
+import com.pruebas.sistema_inventario.dtos.ProductDTO;
 import com.pruebas.sistema_inventario.entities.InventoryMovement;
 import com.pruebas.sistema_inventario.entities.Product;
+import com.pruebas.sistema_inventario.entities.TypeMovement;
 import com.pruebas.sistema_inventario.repository.InventoryMovementRepository;
+import com.pruebas.sistema_inventario.repository.ProductRepository;
 import com.pruebas.sistema_inventario.service.interfaces.InventoryMovementService;
+import com.pruebas.sistema_inventario.service.interfaces.ProductService;
 
 import lombok.Builder;
 
@@ -18,10 +23,39 @@ import lombok.Builder;
 public class InventoryMovementServiceImpl implements InventoryMovementService {
 	
 	private final InventoryMovementRepository inventoryMovementRepository;
+	private final ProductRepository productRepository;
+	private final ProductService productService;
 	private final ModelMapper modelMapper;
 
 	@Override
 	public InventoryMovementDTO save(InventoryMovementDTO movementDTO) {
+		Product product = productRepository.findById(movementDTO.getProduct().getId())
+				.orElseThrow();
+		movementDTO.setBeforeStock(product.getStockActual());
+		
+		if(movementDTO.getTypeMovement() == TypeMovement.IN) {
+			product.setStockActual(product.getStockActual() + movementDTO.getAmount());
+		}
+		else if(movementDTO.getTypeMovement() == TypeMovement.OUT) {
+			int newStock = product.getStockActual() - movementDTO.getAmount();
+			if(newStock < 0) {
+				throw new IllegalArgumentException("There is not enough stock to complete the shipment.");
+			}
+			product.setStockActual(newStock);
+		}
+		else if(movementDTO.getTypeMovement() == TypeMovement.ADJUSTMENT) {
+			product.setStockActual(movementDTO.getAmount());
+		}
+		
+		ProductDTO updated = productService.update(product.getId(), modelMapper.map(product, ProductDTO.class));
+		movementDTO.setAfterStock(updated.getStockActual());
+	    movementDTO.setPriceUnit(updated.getPriceUnit());
+		
+	    // If date is null, we set the current date
+	    if (movementDTO.getMovementDate() == null) {
+	        movementDTO.setMovementDate(LocalDateTime.now());
+	    }
+	    
 		InventoryMovement movement = modelMapper.map(movementDTO, InventoryMovement.class);
 		InventoryMovement saved = inventoryMovementRepository.save(movement);
 		return modelMapper.map(saved, InventoryMovementDTO.class);
@@ -36,7 +70,7 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 
 	@Override
 	public List<InventoryMovementDTO> findAll() {
-		return inventoryMovementRepository.findAll()
+		return inventoryMovementRepository.findAllOrderByMovementDateAsc()
 				.stream()
 				.map(object -> modelMapper.map(object, InventoryMovementDTO.class))
 				.collect(Collectors.toList());
@@ -62,7 +96,5 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 	public void deleteById(Long id) {
 		inventoryMovementRepository.deleteById(id);
 	}
-	
-	
 	
 }
