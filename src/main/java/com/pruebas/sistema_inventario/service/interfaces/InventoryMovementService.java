@@ -22,5 +22,7 @@ public interface InventoryMovementService {
 
 	Page<InventoryMovementDTO> filtered(LocalDate dateFrom, LocalDate dateTo, 
 			TypeMovement type, String user, Long productId, int page, int size);
+
+	List<InventoryMovementDTO> lastestMovements();
 	
 }

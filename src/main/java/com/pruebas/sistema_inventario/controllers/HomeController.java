@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.pruebas.sistema_inventario.service.interfaces.InventoryMovementService;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
 
 import lombok.Builder;
@@ -15,6 +16,7 @@ import lombok.Builder;
 @RequestMapping("/")
 public class HomeController {
 	
+	private final InventoryMovementService movementService;
 	private final ProductService productService;
 	
 	@GetMapping("/")
@@ -34,7 +36,7 @@ public class HomeController {
         model.addAttribute("productsStockLow", productService.findByLowStock());
         
         // List of products to avoid errors
-        model.addAttribute("lastMovements", List.of());
+        model.addAttribute("lastMovements", movementService.lastestMovements());
         model.addAttribute("mostMovedProducts", List.of());
 		
 		return "home/index";

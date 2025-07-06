@@ -101,12 +101,12 @@
 	                        </thead>
 	                        <tbody>
 	                            <tr th:each="movement : ${lastMovements}">
-	                                <td th:text="${#dates.format(movement.date, 'dd/MM')}"></td>
+	                                <td th:text="${#temporals.format(movement.movementDate, 'yyyy-MM-dd HH:mm')}"></td>
 	                                <td th:text="${movement.product.name}"></td>
 	                                <td>
 	                                    <span class="badge" 
-	                                          th:classappend="${movement.type == 'IN'} ? 'bg-success' : 'bg-danger'"
-	                                          th:text="${movement.type}">
+	                                          th:classappend="${movement.typeMovement == 'IN'} ? 'bg-success' : 'bg-danger'"
+	                                          th:text="${movement.typeMovement}">
 	                                    </span>
 	                                </td>
 	                                <td th:text="${movement.amount}"></td>

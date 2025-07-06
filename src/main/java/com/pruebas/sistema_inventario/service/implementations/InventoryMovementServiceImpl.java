@@ -116,4 +116,12 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 	    return movements.map(object -> modelMapper.map(object, InventoryMovementDTO.class));
 	}
 	
+	@Override
+	public List<InventoryMovementDTO> lastestMovements() {
+		return inventoryMovementRepository.findTop5ByOrderByMovementDateDesc()
+				.stream()
+				.map(object -> modelMapper.map(object, InventoryMovementDTO.class))
+				.collect(Collectors.toList());
+	}
+	
 }
