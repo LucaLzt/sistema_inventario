@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.ProductDTO;
@@ -14,6 +15,7 @@ import com.pruebas.sistema_inventario.entities.Category;
 import com.pruebas.sistema_inventario.entities.Product;
 import com.pruebas.sistema_inventario.repository.ProductRepository;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
+import com.pruebas.sistema_inventario.specifications.ProductSpecification;
 
 import lombok.Builder;
 
@@ -70,25 +72,9 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Override
 	public Page<ProductDTO> findFiltered(String search, List<Long> categories, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<Product> products;
-		
-		if((search == null || search.isBlank()) && (categories == null || categories.isEmpty())) {
-			products = productRepository.findAll(pageable);
-		}
-		// Only Categories
-		else if((search == null || search.isBlank()) && categories != null && !categories.isEmpty()) {
-			products = productRepository.findByCategory_IdIn(categories, pageable);
-		}
-		// Only Search
-		else if((categories == null || categories.isEmpty()) && search != null && !search.isBlank()) {
-			products = productRepository.findByNameContains(search, pageable);
-		}
-		// Both Filters
-		else {
-			products = productRepository.findByNameContainsIgnoreCaseAndCategory_IdIn(search, categories, pageable);
-		}
-		
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "category_name"));
+		var spec = ProductSpecification.filter(search, categories);
+		Page<Product> products = productRepository.findAll(spec, pageable);
 		return products.map(object -> modelMapper.map(object, ProductDTO.class));
 	}
 
