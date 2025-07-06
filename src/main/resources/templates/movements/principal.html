@@ -46,7 +46,7 @@
 			            <!-- Type Filter -->
 			            <div class="dropdown">
 							<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-							    <span th:text="${param.type != null && !param.type.isEmpty() ? param.type : 'Type'}">Type</span>
+							    <span th:text="${#strings.isEmpty(param.type) ? 'Type' : param.type}">Type</span>
 							</button>
 							<div class="dropdown-menu p-3" style="min-width: 200px;">
 								<select class="form-select" name="type">
