@@ -1,10 +1,15 @@
 package com.pruebas.sistema_inventario.service.implementations;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.InventoryMovementDTO;
@@ -16,6 +21,7 @@ import com.pruebas.sistema_inventario.repository.InventoryMovementRepository;
 import com.pruebas.sistema_inventario.repository.ProductRepository;
 import com.pruebas.sistema_inventario.service.interfaces.InventoryMovementService;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
+import com.pruebas.sistema_inventario.specifications.InventoryMovementSpecification;
 
 import lombok.Builder;
 
@@ -70,7 +76,7 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 
 	@Override
 	public List<InventoryMovementDTO> findAll() {
-		return inventoryMovementRepository.findAllOrderByMovementDateAsc()
+		return inventoryMovementRepository.findAll()
 				.stream()
 				.map(object -> modelMapper.map(object, InventoryMovementDTO.class))
 				.collect(Collectors.toList());
@@ -95,6 +101,19 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 	@Override
 	public void deleteById(Long id) {
 		inventoryMovementRepository.deleteById(id);
+	}
+	
+	@Override
+	public Page<InventoryMovementDTO> filtered(LocalDate dateFrom, LocalDate dateTo, 
+			TypeMovement type, String user, Long productId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "movementDate"));
+		ProductDTO product = null;
+		if (productId != null) {
+		    product = productService.findById(productId);
+		}
+	    var spec = InventoryMovementSpecification.filter(dateFrom, dateTo, type, user, product);
+	    Page<InventoryMovement> movements = inventoryMovementRepository.findAll(spec, pageable);
+	    return movements.map(object -> modelMapper.map(object, InventoryMovementDTO.class));
 	}
 	
 }
