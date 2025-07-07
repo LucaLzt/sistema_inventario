@@ -56,6 +56,10 @@ public class InventoryMovement {
 	@Column(name = "registered_user", nullable = false)
 	private String registeredUser = "system";
 	
+	@ManyToOne
+	@JoinColumn(name = "branch_id", nullable = false)
+	private Branch branch;
+	
 	@CreationTimestamp
 	@Column(name = "movement_date", nullable = false)
 	private LocalDateTime movementDate;
