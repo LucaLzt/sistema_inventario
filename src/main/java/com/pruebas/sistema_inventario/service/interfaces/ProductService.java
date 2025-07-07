@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.pruebas.sistema_inventario.dtos.ProductDTO;
+import com.pruebas.sistema_inventario.dtos.ProductMovementsDTO;
 
 public interface ProductService {
 	
@@ -29,5 +30,7 @@ public interface ProductService {
 	long countOutOfStock();
 	
 	List<ProductDTO> findByLowStock();
+
+	List<ProductMovementsDTO> popularProducts();
 	
 }

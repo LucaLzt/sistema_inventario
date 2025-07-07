@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.pruebas.sistema_inventario.dtos.ProductMovementsFlatDTO;
 import com.pruebas.sistema_inventario.entities.Product;
 
 @Repository
@@ -33,5 +34,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
 	
 	@Query("SELECT p FROM Product p WHERE p.stockActual <= p.stockMinimum")
 	List<Product> findByLowStock();
+	
+	@Query("SELECT new com.pruebas.sistema_inventario.dtos.ProductMovementsFlatDTO(m.product, COUNT(m)) FROM Product p JOIN InventoryMovement m ON p.id = m.product.id GROUP BY p.id ORDER BY COUNT(m.id) DESC")
+	List<ProductMovementsFlatDTO> findTop5PopularProducts();
 	
 }

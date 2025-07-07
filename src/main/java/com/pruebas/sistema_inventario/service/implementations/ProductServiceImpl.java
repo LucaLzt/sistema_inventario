@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.ProductDTO;
+import com.pruebas.sistema_inventario.dtos.ProductMovementsDTO;
 import com.pruebas.sistema_inventario.entities.Category;
 import com.pruebas.sistema_inventario.entities.Product;
 import com.pruebas.sistema_inventario.repository.ProductRepository;
@@ -108,6 +109,18 @@ public class ProductServiceImpl implements ProductService {
 		return productRepository.findByLowStock()
 				.stream()
 				.map(object -> modelMapper.map(object, ProductDTO.class))
+				.collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<ProductMovementsDTO> popularProducts() {
+		return productRepository.findTop5PopularProducts()
+				.stream()
+				.limit(5)
+				.map(object -> ProductMovementsDTO.builder()
+						.product(modelMapper.map(object.getProduct(), ProductDTO.class))
+						.totalMovements(object.getTotalMovements())
+						.build())
 				.collect(Collectors.toList());
 	}
 

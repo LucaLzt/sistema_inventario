@@ -1,7 +1,5 @@
 package com.pruebas.sistema_inventario.controllers;
 
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +35,7 @@ public class HomeController {
         
         // List of products to avoid errors
         model.addAttribute("lastMovements", movementService.lastestMovements());
-        model.addAttribute("mostMovedProducts", List.of());
+        model.addAttribute("mostMovedProducts", productService.popularProducts());
 		
 		return "home/index";
 	}
