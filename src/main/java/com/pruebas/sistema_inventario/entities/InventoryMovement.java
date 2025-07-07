@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity 
-@Table(name = "inventory_movements")
+@Table(name = "inventory_movement")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class InventoryMovement {
