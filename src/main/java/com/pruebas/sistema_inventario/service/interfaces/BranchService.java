@@ -14,6 +14,8 @@ public interface BranchService {
 	
 	BranchDTO update(Long id, BranchDTO branchDto);
 	
-	void deleteById(Long id);	
+	void deleteById(Long id);
+
+	List<BranchDTO> findByFilter(String filter);	
 	
 }

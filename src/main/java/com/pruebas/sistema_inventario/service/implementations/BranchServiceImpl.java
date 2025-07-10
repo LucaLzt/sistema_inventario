@@ -55,5 +55,13 @@ public class BranchServiceImpl implements BranchService {
 	public void deleteById(Long id) {
 		branchRepository.deleteById(id);
 	}
+	
+	@Override
+	public List<BranchDTO> findByFilter(String filter) {
+		List<Branch> branches = branchRepository.findByNameContainingIgnoreCaseOrAddressContainingIgnoreCase(filter, filter);
+		return branches.stream()
+				.map(object -> modelMapper.map(object, BranchDTO.class))
+				.collect(Collectors.toList());
+	}
 
 }

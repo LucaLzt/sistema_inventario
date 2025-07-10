@@ -35,6 +35,12 @@
 	                    </a>
 	                </li>
 	                <li class="nav-item">
+	                    <a th:href="@{/branches/home}" 
+	                       th:classappend="${activePage} == 'branches' ? 'active' : ''"
+	                       class="nav-link">Branches
+	                    </a>
+	                </li>
+	                <li class="nav-item">
 	                    <span class="navbar-text">LucaLzt</span>
 	                </li>
 	            </ul>
