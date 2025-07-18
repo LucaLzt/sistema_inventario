@@ -10,6 +10,334 @@
 	<!-- Navbar -->
 	<div th:replace="~{fragments/navbar :: navbar('branches')}"></div>
 	
+	<!-- Main Container -->
+	<div class="main-container">
+		
+		<!-- Title -->
+		<div class="d-flex align-items-center m-3">
+		    <h3 class="mb-0">Branches - Details</h3>
+		    <span class="mx-3 text-muted">|</span>
+		    <h5 class="mb-0 text-muted">
+		        Details for <span th:text="${branch.name}">Name</span> - <span th:text="${branch.address}">Address</span>
+		    </h5>
+		</div>
+		
+		<!-- Information Container -->
+		<div class="container-fluid">
+		
+		    <!-- Product Form -->
+			<form class="row align-items-center mb-3" th:action="@{/branches/{id}/details(id=${branch.id})}" method="get">
+				
+				<!-- Hidden Params for Movements -->
+				<input type="hidden" name="dateFromMv" th:value="${param.dateFromMv}"/>
+				<input type="hidden" name="dateToMv" th:value="${param.dateToMv}"/>
+				<input type="hidden" name="typeMv" th:value="${param.typeMv}"/>
+				<input type="hidden" name="productIdMv" th:value="${param.productIdMv}"/>
+				<input type="hidden" name="pageMv" th:value="${param.pageMv}"/>
+				
+				<!-- Filter By Product Name -->
+				<div class="col-md-3 col-12 mb-2 mb-md-0">
+					<div class="row align-items-center">
+						<div class="col-auto">
+							<label for="filter" class="form-label mb-0">Filter:</label>
+						</div>
+						<div class="col">
+							<input  class="form-control" type="text" id="searchPr" name="searchPr" placeholder="Search Product" th:value="${param.searchPr}" autocomplete="off"/>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Filter Per Categories -->
+				<div class="col-md-5 col-12 mb-2 mb-md-0">
+					<div class="dropdown w-100">
+						<button class="btn btn-outline-dark dropdown-toggle w-100 text-start" type="button" data-bs-toggle="dropdown">
+							Categories
+						</button>
+						<ul class="dropdown-menu p-3 w-100" style="max-height:250px; overflow-y:auto;">
+							<li th:each="cat : ${categories}">
+								<div class="form-check">
+		                    		<input class="form-check-input"
+		                    			   type="checkbox"
+		                    			   th:id="${cat.id}"
+		                    			   th:name="categoriesPr"
+		                    			   th:value="${cat.id}"
+		                    			   th:checked="${param.categoriesPr != null and #lists.contains(param.categoriesPr, cat.id.toString())}"/>
+		                    	    <label class="form-check-label ms-1" th:for="${cat.id}" th:text="${cat.name}"></label>
+		                    	</div>
+	                    	</li>
+						</ul>
+					</div>
+				</div>
+				
+				<!-- Buttons -->
+				<div class="col-md-4 col-12 mt-2 mt-md-0">
+					<button type="submit" class="btn btn-outline-dark me-2">Filter</button>
+					<a th:href="@{/branches/{id}/details(
+							    id=${branch.id},
+							    dateFromMv=${dateFromMv},
+							    dateToMv=${dateToMv},
+							    typeMv=${typeMv},
+							    productIdMv=${productIdMv},
+							    pageMv=${currentPageMv})}" 
+					   class="btn btn-outline-secondary">Reset</a>
+				</div>
+				
+			</form>
+			
+			<!-- Products Table -->
+			<div class="card mb-3">
+				<div class="card-header text-center">
+					<h5>Products</h5>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-sm text-center">
+							<thead>
+			                    <tr>
+			                        <th>Code</th>
+			                        <th>Name</th>
+			                        <th>Category</th>
+			                        <th>Price</th>
+			                        <th>Stock</th>
+			                        <th>Status</th>
+			                        <th>Earnings</th>
+			                    </tr>
+			                </thead>
+			                <tbody>
+			                    <tr th:each="i : ${#numbers.sequence(0, 4)}">
+			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.code : '—'}"></td>
+			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.name : '—'}"></td>
+			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.category.name : '—'}"></td>
+			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.priceUnit : '—'}"></td>
+			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.stockActual : '—'}"></td>
+			                        <td th:text="${#lists.size(productEarnings) > i ? (productEarnings[i].product.active ? 'Active' : 'Inactive') : '—'}"></td>
+			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].earnings : '—'}"></td>
+			                    </tr>
+			                </tbody>
+						</table>
+					</div>
+					<!-- Pagination -->
+					<nav aria-label="Products pagination" class="mt-3">
+					    <ul class="pagination justify-content-center">
+					        <!-- Previous Button -->
+					        <li class="page-item" th:classappend="${currentPagePr == 0} ? 'disabled'">
+					            <a th:href="@{/branches/{id}/details(
+                                            id=${branch.id},
+                                            pagePr=${currentPagePr + 1},
+                                            searchPr=${param.searchPr},
+                                            categoriesPr=${param.categoriesPr},
+                                            dateFromMv=${param.dateFromMv},
+                                            dateToMv=${param.dateToMv},
+                                            typeMv=${param.typeMv},
+                                            productIdMv=${param.productIdMv},
+                                            pageMv=${param.pageMv}
+                                            )}"
+					                class="page-link" 
+					                tabindex="-1"
+					                th:if="${currentPagePr > 0}">Previous</a>
+					            <span class="page-link" th:if="${currentPagePr == 0}">Previous</span>
+					        </li>
+					        
+					        <!-- Number of Page -->
+					        <li class="page-item"
+					            th:each="i : ${#numbers.sequence(0, totalPagesPr-1)}"
+					            th:classappend="${i == currentPagePr} ? 'active'">
+					            <a class="page-link" 
+					               th:href="@{/branches/{id}/details(
+                                            id=${branch.id},
+                                            pagePr=${currentPagePr + 1},
+                                            searchPr=${param.searchPr},
+                                            categoriesPr=${param.categoriesPr},
+                                            dateFromMv=${param.dateFromMv},
+                                            dateToMv=${param.dateToMv},
+                                            typeMv=${param.typeMv},
+                                            productIdMv=${param.productIdMv},
+                                            pageMv=${param.pageMv}
+                                            )}"
+					               th:text="${i + 1}"
+					               th:if="${i != currentPagePr}">1</a>
+					            <span class="page-link" th:if="${i == currentPagePr}" th:text="${i + 1}">1</span>
+					        </li>
+					        
+					        <!-- Next Button -->
+					        <li class="page-item" th:classappend="${currentPagePr == totalPagesPr - 1} ? 'disabled'">
+					            <a class="page-link" 
+					               th:href="@{/branches/{id}/details(
+                                            id=${branch.id},
+                                            pagePr=${currentPagePr + 1},
+                                            searchPr=${param.searchPr},
+                                            categoriesPr=${param.categoriesPr},
+                                            dateFromMv=${param.dateFromMv},
+                                            dateToMv=${param.dateToMv},
+                                            typeMv=${param.typeMv},
+                                            productIdMv=${param.productIdMv},
+                                            pageMv=${param.pageMv}
+                                            )}"
+					               th:if="${currentPagePr < totalPagesPr - 1}">Next</a>
+					            <span class="page-link" th:if="${currentPagePr == totalPagesPr - 1}">Next</span>
+					        </li>
+					    </ul>
+					</nav>
+				</div>
+			</div>
+		
+			<!-- Movements Form -->
+	        <form class="row align-items-center mb-3" th:action="@{/branches/{id}/details(id=${branch.id})}" method="get">
+				
+				<!-- Hidden Params for Products -->
+				<input type="hidden" name="searchPr" th:value="${param.searchPr}"/>
+				<input type="hidden" name="pagePr" th:value="${param.pagePr}"/>
+				<input type="hidden" th:each="cat : ${categoriesPr}" name="categoriesPr" th:value="${cat}"/>
+				
+				<!-- Movements Filter -->
+		        <div class="d-flex flex-wrap gap-2">
+		            
+		            <!-- Date Range Filter -->
+		            <div>
+				        <label class="form-label mb-1 me-2">From:</label>
+				        <input type="date" class="form-control d-inline-block w-auto" name="dateFromMv" th:value="${dateFromMv != null ? #temporals.format(dateFromMv, 'yyyy-MM-dd') : ''}">
+				        <label class="form-label mb-1 ms-3 me-2">To:</label>
+				        <input type="date" class="form-control d-inline-block w-auto" name="dateToMv" th:value="${dateToMv != null ? #temporals.format(dateToMv, 'yyyy-MM-dd') : ''}">
+				    </div>
+		            <!-- Type Filter -->
+		            <div>
+				        <select class="form-select" name="typeMv" id="typeMv" style="min-width:120px;">
+				            <option value="">All types</option>
+				            <option th:each="type : ${types}"
+				                    th:value="${type}"
+				                    th:text="${type}"
+				                    th:selected="${type == typeMv}">
+				            </option>
+				        </select>
+				    </div>
+				    <!-- Product Filter -->
+				    <div>
+				        <select class="form-select" name="productIdMv" id="productIdMv" style="min-width:120px;">
+				            <option value="">All products</option>
+				            <option th:each="p : ${products}"
+				                    th:value="${p.id}"
+				                    th:text="${p.name}"
+				                    th:selected="${p.id != null and p.id == productIdMv}">
+				            </option>
+				        </select>
+				    </div>
+		            <!-- Filter Button -->
+		            <button type="submit" class="btn btn-outline-dark">Filter</button>
+		            <a th:href="@{/branches/{id}/details(
+				                id=${branch.id}, 
+				                searchPr=${searchPr}, 
+				                categoriesPr=${categoriesPr}, 
+				                pagePr=${currentPagePr})}"
+		               class="btn btn-outline-secondary">Reset</a>
+		        </div>
+				
+			</form>
+			
+			<!-- Movements Table -->
+			<div class="card">
+				<div class="card-header text-center">
+					<h5>Movements</h5>
+				</div>
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-sm text-center">
+							<thead>
+		                        <tr>
+		                            <th>Date</th>
+		                            <th>Type</th>
+		                            <th>User</th>
+		                            <th>Product</th>
+		                            <th>Amount</th>
+		                            <th>Unit Price</th>
+		                            <th>Stock Before</th>
+		                            <th>Stock After</th>
+		                            <th>Reason</th>
+		                        </tr>
+		                    </thead>
+		                    <tbody>
+		                        <tr th:each="i : ${#numbers.sequence(0, 4)}">
+		                            <td th:text="${#lists.size(movements) > i ? #temporals.format(movements[i].movementDate, 'yyyy-MM-dd HH:mm') : '—' }"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].typeMovement : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].registeredUser : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].product.name : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].amount : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].priceUnit : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].beforeStock : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].afterStock : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? movements[i].motive : '—'}"></td>
+		                        </tr>
+		                    </tbody>
+						</table>
+					</div>
+					<!-- Pagination -->
+					<nav aria-label="Movements pagination" class="mt-3">
+					    <ul class="pagination justify-content-center">
+					        <!-- Previous Button -->
+					        <li class="page-item" th:classappend="${currentPageMv == 0} ? 'disabled'">
+					            <a th:href="@{/branches/{id}/details(
+					                        id=${branch.id},
+                                            pageMv=${currentPageMv - 1},
+                                            dateFromMv=${param.dateFromMv},
+                                            dateToMv=${param.dateToMv},
+                                            typeMv=${param.typeMv},
+                                            productIdMv=${param.productIdMv},
+                                            searchPr=${param.searchPr},
+                                            categoriesPr=${param.categoriesPr},
+                                            pagePr=${param.pagePr}
+					                        )}" 
+					                class="page-link" 
+					                tabindex="-1"
+					                th:if="${currentPageMv > 0}">Previous</a>
+					            <span class="page-link" th:if="${currentPageMv == 0}">Previous</span>
+					        </li>
+					        
+					        <!-- Number of Page -->
+					        <li class="page-item"
+					            th:each="i : ${#numbers.sequence(0, totalPagesMv-1)}"
+					            th:classappend="${i == currentPageMv} ? 'active'">
+					            <a class="page-link" 
+					               th:href="@{/branches/{id}/details(
+                                            id=${branch.id},
+                                            pageMv=${i},
+                                            dateFromMv=${param.dateFromMv},
+                                            dateToMv=${param.dateToMv},
+                                            typeMv=${param.typeMv},
+                                            productIdMv=${param.productIdMv},
+                                            searchPr=${param.searchPr},
+                                            categoriesPr=${param.categoriesPr},
+                                            pagePr=${param.pagePr}
+                                            )}"
+					               th:text="${i + 1}"
+					               th:if="${i != currentPageMv}">1</a>
+					            <span class="page-link" th:if="${i == currentPageMv}" th:text="${i + 1}">1</span>
+					        </li>
+					        
+					        <!-- Next Button -->
+					        <li class="page-item" th:classappend="${currentPageMv == totalPagesMv - 1} ? 'disabled'">
+					            <a class="page-link" 
+					               th:href="@{/branches/{id}/details(
+                                            id=${branch.id},
+                                            pageMv=${currentPageMv + 1},
+                                            dateFromMv=${param.dateFromMv},
+                                            dateToMv=${param.dateToMv},
+                                            typeMv=${param.typeMv},
+                                            productIdMv=${param.productIdMv},
+                                            searchPr=${param.searchPr},
+                                            categoriesPr=${param.categoriesPr},
+                                            pagePr=${param.pagePr}
+                                            )}"
+					               th:if="${currentPageMv < totalPagesMv - 1}">Next</a>
+					            <span class="page-link" th:if="${currentPageMv == totalPagesMv - 1}">Next</span>
+					        </li>
+					    </ul>
+					</nav>
+				</div>
+			</div>
+			
+		</div>
+		
+	</div>
+	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

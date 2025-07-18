@@ -23,7 +23,8 @@ public class InventoryMovementDTO {
 	private String motive;
 	private Integer beforeStock;
 	private Integer afterStock;
-	@Builder.Default private String registeredUser = "system";
+	@Builder.Default private String registeredUser = "System";
+	private BranchDTO branch;
 	private LocalDateTime movementDate;
 	
 }

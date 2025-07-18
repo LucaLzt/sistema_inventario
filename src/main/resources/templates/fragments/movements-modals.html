@@ -6,7 +6,7 @@
 </head>
 <body>
 	<!-- Modal Add Movement -->
-	<div th:fragment="modal-add-movement(products, types)">
+	<div th:fragment="modal-add-movement(products, types, branches)">
 	    <div class="modal fade" id="modalAddMovement" tabindex="-1">
 	        <div class="modal-dialog modal-lg">
 	            <div class="modal-content">
@@ -58,13 +58,29 @@
 	                                </div>
 	                            </div>
 	                        </div>
-	                        <div class="mb-3">
-	                            <label class="form-label">Motive</label>
-	                            <input type="text" th:field="*{motive}" class="form-control" autocomplete="off">
+	                        <div class="row">
+	                        	<div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Motive</label>
+			                            <input type="text" th:field="*{motive}" class="form-control" autocomplete="off">
+			                        </div>
+		                        </div>
+		                        <div class="col-md-6">
+			                        <div class="mb-3">
+			                            <label class="form-label">Registered User</label>
+			                            <input type="text" th:field="*{registeredUser}" class="form-control" readonly>
+			                        </div>
+		                        </div>
 	                        </div>
 	                        <div class="mb-3">
-	                            <label class="form-label">Registered User</label>
-	                            <input type="text" th:field="*{registeredUser}" class="form-control" readonly>
+	                            <label class="form-label">Branches</label>
+	                            <select class="form-select" th:field="*{branch.id}">
+	                                <option value="" disabled selected>Select category...</option>
+	                                <option th:each="branch : ${branches}"
+	                                        th:value="${branch.id}"
+	                                        th:text="${branch.name + ' - ' + branch.address}">
+	                                </option>
+	                            </select>
 	                        </div>
 	                    </div>
 	                    <div class="modal-footer border-secondary">

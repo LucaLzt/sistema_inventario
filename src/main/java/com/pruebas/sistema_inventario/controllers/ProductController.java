@@ -1,5 +1,7 @@
 package com.pruebas.sistema_inventario.controllers;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -49,6 +51,7 @@ public class ProductController {
 	@PostMapping("/add")
 	public String addProduct(@ModelAttribute ProductDTO product) {
 		product.setCode(productCodeGenerator.generateUserCode("LucaLzt"));
+		product.setSellingPorcentage(product.getSellingPorcentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE));
 		productService.save(product);
 		return "redirect:/products/home?add=ok";
 	}

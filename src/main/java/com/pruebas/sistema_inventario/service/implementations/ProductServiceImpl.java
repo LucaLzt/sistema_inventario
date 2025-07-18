@@ -1,5 +1,6 @@
 package com.pruebas.sistema_inventario.service.implementations;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,14 +9,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.ProductDTO;
 import com.pruebas.sistema_inventario.dtos.ProductMovementsDTO;
 import com.pruebas.sistema_inventario.entities.Category;
+import com.pruebas.sistema_inventario.entities.InventoryMovement;
 import com.pruebas.sistema_inventario.entities.Product;
+import com.pruebas.sistema_inventario.entities.TypeMovement;
 import com.pruebas.sistema_inventario.repository.ProductRepository;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
+import com.pruebas.sistema_inventario.specifications.ProductByBranchSpecification;
 import com.pruebas.sistema_inventario.specifications.ProductSpecification;
 
 import lombok.Builder;
@@ -122,6 +127,37 @@ public class ProductServiceImpl implements ProductService {
 						.totalMovements(object.getTotalMovements())
 						.build())
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Page<ProductDTO> findByBranchWithFilters(Long id, String filter, List<Long> categories, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Specification<Product> spec = ProductByBranchSpecification.filterByBranch(id, filter, categories);
+		Page<Product> products = productRepository.findAll(spec, pageable);
+		return products.map(object -> modelMapper.map(object, ProductDTO.class));
+	};
+	
+	@Override
+	public BigDecimal earningPerProduct(Long id, ProductDTO productDto) {
+		BigDecimal earnings = BigDecimal.ZERO;
+		Product product = productRepository.findById(productDto.getId())
+				.orElseThrow();
+		for(InventoryMovement mov : product.getMovements()) {
+			BigDecimal movementTotal = BigDecimal.ZERO;
+			
+			if(mov.getTypeMovement() == TypeMovement.OUT) { // MovementTotal = (PriceUnit * SellingPercentage) * Amount
+				movementTotal = mov.getPriceUnit()
+						.multiply(productDto.getSellingPorcentage())
+						.multiply(BigDecimal.valueOf(mov.getAmount()));
+				earnings = earnings.add(movementTotal);
+			} 
+			else if(mov.getTypeMovement() == TypeMovement.IN) { // MovementTotal = PriceUnit * Amount
+				movementTotal = mov.getPriceUnit()
+						.multiply(BigDecimal.valueOf(mov.getAmount()));
+				earnings = earnings.subtract(movementTotal);
+			}	
+		}
+		return earnings;
 	}
 
 }

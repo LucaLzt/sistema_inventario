@@ -17,6 +17,6 @@ public class BranchDTO {
 	private Long id;
 	private String name;
 	private String address;
-	private @Builder.Default List<InventoryMovementDTO> inventoryMovements = new ArrayList<>();
+	@Builder.Default private List<InventoryMovementDTO> inventoryMovements = new ArrayList<>();
 	
 }
