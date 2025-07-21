@@ -35,7 +35,7 @@ public class ProductController {
 			@RequestParam(required = false) List<Long> categories,
 			@RequestParam(defaultValue = "0") int page,
 			Model model) {
-		int pageSize = 10;
+		int pageSize = 11;
 		Page<ProductDTO> filtered = productService.findFiltered(search, categories, page, pageSize);
 		model.addAttribute("product", new ProductDTO());
 		model.addAttribute("products", filtered);
