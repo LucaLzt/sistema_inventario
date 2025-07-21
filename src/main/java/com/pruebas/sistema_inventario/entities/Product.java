@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="products")
+@Table(name="product")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class Product {
@@ -41,6 +41,9 @@ public class Product {
 	
 	@Column(name = "price_unit", precision = 10, scale = 2, nullable = false)
 	private BigDecimal priceUnit;
+
+	@Column(name = "selling_procentage", precision = 10, scale = 2, nullable = false)
+	private BigDecimal sellingPorcentage;
 	
 	@Column(name = "stock_actual", nullable = false)
 	private Integer stockActual;

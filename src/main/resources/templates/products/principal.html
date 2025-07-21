@@ -19,131 +19,190 @@
         </div>
         
         <!-- Filter Section -->
-        <div class="filter-section">
-            <form method="get" th:action="@{/products/home}">
-	            <div class="row align-items-center gx-0">
-	                <div class="col-md-3">
-	                    <div class="d-flex align-items-center">
-	                        <label class="m-3">Filter:</label>
-	                        <input type="text" class="form-control" placeholder="Search Product" id="searchInput" name="search" th:value="${param.search}" autocomplete="off">
-	                    </div>
-	                </div>
-	                <div class="col-md-9 ">
-	                    <div class="d-flex align-items-center">
-	                        <label class="mx-3">Categories:</label>
-	                        <div class="d-flex flex-wrap gap-3">
-	                        	<div th:each="cat : ${categories}">
-	                        		<input class="form-check-input"
-	                        			   type="checkbox"
-	                        			   th:id="${cat.id}"
-	                        			   th:name="categories"
-	                        			   th:value="${cat.id}"
-	                        			   th:checked="${param.categories != null and #lists.contains(param.categories, cat.id.toString())}"/>
-	                        	    <label class="form-check-label ms-1" th:for="${cat.id}" th:text="${cat.name}"></label>
-	                        	</div>
-	                        </div>
-	                    </div>
-	                </div>
-	                <div class="col-12 mt-2">
-	                	<div class="d-flex flex-wrap gap-2 ms-3">
-					        <button type="submit" class="btn btn-outline-dark">Apply Filters</button>
-					        <a th:href="@{/products/home}" class="btn btn-outline-secondary">Reset</a>
-					    </div>
-	                </div>
-	            </div>
-            </form>
-        </div>
+        <div class="container-fluid">
+	        <div class="filter-section ms-2 d-flex justify-content-between align-items-center">
+	        	
+	        	<div class="flex-grow-1 me-3">
+	        	
+	        		<form class="row align-items-center mb-3" method="get" th:action="@{/products/home}">
+				        <!-- Filter By Product Name -->
+				        <div class="col-md-3 col-12 mb-2 mb-md-0">
+				            <div class="row align-items-center">
+				                <div class="col-auto">
+				                    <label for="search" class="form-label mb-0">Filter:</label>
+				                </div>
+				                <div class="col">
+				                    <input type="text" class="form-control" placeholder="Search Product" id="searchInput" name="search" th:value="${param.search}" autocomplete="off">
+				                </div>
+				            </div>
+				        </div>
+				        
+				        <!-- Filter Per Categories -->
+				        <div class="col-md-5 col-12 mb-2 mb-md-0">
+				            <div class="row align-items-center">
+				                <div class="col-auto">
+				                    <label for="categories" class="form-label mb-0">Categories:</label>
+				                </div>
+				                <div class="col">
+				                    <div class="dropdown w-100">
+				                        <button class="form-control dropdown-toggle text-start" type="button" data-bs-toggle="dropdown">
+				                            <span th:if="${param.categories == null or #lists.isEmpty(param.categories)}">Categories</span>
+				                            <span th:if="${param.categories != null and !#lists.isEmpty(param.categories)}">
+				                                <span th:each="cat, iterStat : ${categories}" 
+				                                      th:if="${#lists.contains(param.categories, cat.id.toString())}">
+				                                    <span th:text="${cat.name}"></span>
+				                                    <span th:if="${!iterStat.last}">- </span>
+				                                </span>
+				                            </span>
+				                        </button>
+				                        <ul class="dropdown-menu p-3 w-100" style="max-height:250px; overflow-y:auto;">
+				                            <li th:each="cat : ${categories}">
+				                                <div class="form-check">
+				                                    <input class="form-check-input"
+				                                           type="checkbox"
+				                                           th:id="${cat.id}"
+				                                           th:name="categories"
+				                                           th:value="${cat.id}"
+				                                           th:checked="${param.categories != null and #lists.contains(param.categories, cat.id.toString())}"/>
+				                                    <label class="form-check-label ms-1" th:for="${cat.id}" th:text="${cat.name}"></label>
+				                                </div>
+				                            </li>
+				                        </ul>
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				        
+				        <!-- Buttons -->
+				        <div class="col-md-4 col-12 mt-2 mt-md-0 d-flex">
+				            <button type="submit" class="btn btn-outline-dark me-2">Filter</button>
+				            <a th:href="@{/products/home}" class="btn btn-outline-secondary me-2">Reset</a>
+				        	<button type="button" class="btn btn-outline-dark ms-auto" data-bs-toggle="modal" data-bs-target="#modalAddProduct">
+			                    Add Product
+			                </button>
+				        </div>
+				    </form>
+				    
+	        	</div>
+	        	
+			</div>
+		</div>
         
         <!-- Products List -->
-        <div class="products-list mt-3">
-            <div class="d-flex justify-content-left flex-wrap gap-3 m-2">
-            	<h5 class="m-2">Lists of Products</h5>
-                <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalAddProduct">
-                    Add Product
-                </button>
-            </div>
+        <div class="container-fluid mt-3">
             
             <!-- Table -->
-            <div class="table-responsive ms-2">
-                <table class="table table-hover text-center">
-                    <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTableBody">
-                    	<tr th:each="prod : ${products}">
-                    		<td th:text="${prod.code}"></td>
-                    		<td th:text="${prod.name}"></td>
-                    		<td th:text="${prod.category.name}"></td>
-                    		<td th:text="${prod.priceUnit}"></td>
-                    		<td th:text="${prod.stockActual}"></td>
-                    		<td th:text="${prod.active}"></td>
-                    		<td>
-					        	<button class="btn btn-sm btn-outline-dark"
-					        	        data-bs-toggle="modal"
-					        	        data-bs-target="#modalEditProduct"
-					        	        th:attr="data-id=${prod.id},
-						                         data-name=${prod.name},
-						                         data-code=${prod.code},
-						                         data-description=${prod.description},
-						                         data-priceunit=${prod.priceUnit},
-						                         data-stockactual=${prod.stockActual},
-						                         data-stockminimum=${prod.stockMinimum},
-						                         data-categoryid=${prod.category.id},
-						                         data-active=${prod.active}">
-				        	        Edit
-					        	</button>
-					            <form th:action="@{/products/delete/{id}(id=${prod.id})}" method="post" style="display:inline;">
-								    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
-								</form>
-                    		</td>
-                    	</tr>
-                    </tbody>
-                </table>
-            </div>
-			            
-            <!-- Pagination -->
-            <nav aria-label="Products pagination" class="mt-3">
-            	<ul class="pagination justify-content-center">
-            		<!-- Previous Button -->
-            		<li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item" >
-            			<a th:href="@{/products/home(
-            						page=${currentPage-1},
-            						search=${param.search},
-            						categories=${param.categories}
-            						)}" 
-            				class="page-link" 
-            				tabindex="-1">Previous</a>
-            		</li>
-            		<!-- Number of Page -->
-            		<li class="page-item"
-            			th:each="i : ${#numbers.sequence(0, totalPages-1)}"
-            			th:classappend="${i == currentPage} ? 'active'">
-            			<a class="page-link" 
-            			   th:href="@{/products/home(
-            			   			page=${i},
-            			   			search=${param.search},
-            			   			categories=${param.categories}
-            			   			)}"
-            			   th:text="${i + 1}">1</a>
-            		</li>
-            		<!-- Next Button -->
-            		<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-            			<a class="page-link" th:href="@{/products/home(
-            						page=${currentPage + 1},
-            						search=${param.search},
-            						categories=${param.categories}
-            						)}">Next</a>
-            		</li>
-            	</ul>
-            </nav>
+            <div class="card mb-3">
+            	<div class="card-header text-center">
+            		<h5>List of Products</h5>
+            	</div>
+            	<div class="card-body">
+            		<div class="table-responsive">
+		                <table class="table table-hover text-center">
+		                    <thead>
+		                        <tr>
+		                            <th>Code</th>
+		                            <th>Name</th>
+		                            <th>Category</th>
+		                            <th>Price</th>
+		                            <th>Stock</th>
+		                            <th>Status</th>
+		                            <th>Actions</th>
+		                        </tr>
+		                    </thead>
+		                    <tbody id="productsTableBody">
+		                    	<tr th:each="i : ${#numbers.sequence(0, 10)}">
+			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].code : '—'}"></td>
+			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].name : '—'}"></td>
+			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].category.name : '—'}"></td>
+			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].priceUnit : '—'}"></td>
+			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].stockActual : '—'}"></td>
+			                        <td th:text="${#lists.size(products.content) > i ? (products.content[i].active ? 'Active' : 'Inactive') : '—'}"></td>
+		                    		<td>
+		                    			<!-- Edit Button - Only enabld if product exists -->
+							        	<button th:if="${#lists.size(products.content) > i}" 
+		                            	        type="button" 
+		                            	        class="btn btn-sm btn-outline-dark"
+		                            	        data-bs-toggle="modal"
+		                            	        data-bs-target="#modalEditProduct"
+		                            	        th:attr="data-id=${products.content[i].id},
+		                                                 data-name=${products.content[i].name},
+		                                                 data-code=${products.content[i].code},
+		                                                 data-description=${products.content[i].description},
+		                                                 data-priceunit=${products.content[i].priceUnit},
+		                                                 data-stockactual=${products.content[i].stockActual},
+		                                                 data-stockminimum=${products.content[i].stockMinimum},
+		                                                 data-categoryid=${products.content[i].category.id},
+		                                                 data-active=${products.content[i].active}">
+		                                	Edit
+							        	</button>
+							        	
+							        	<!-- Disabled Edit Button for empty rows -->
+							        	<button th:if="${#lists.size(products.content) <= i}"
+							                    class="btn btn-sm btn-outline-secondary"
+							                    disabled>
+							                Edit
+							        	</button>
+							        	
+							        	<!-- Delete Button - Only enabled if product exists -->
+							            <form th:if="${#lists.size(products.content) > i}"
+							            	  th:action="@{/products/delete/{id}(id=${products.content[i].id})}" 
+							            	  method="post" 
+							            	  style="display:inline;">
+										    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+										</form>
+										
+										<!-- Disabled Delete Button for empty rows -->
+										<form th:if="${#lists.size(products.content) <= i}"
+											  style="display:inline;">
+											<button class="btn btn-sm btn-outline-secondary"
+													type="button"
+													disabled>Delete</button>
+										</form>
+		                    		</td>
+		                    	</tr>
+		                    </tbody>
+		                </table>
+		            </div>
+		            
+		            <!-- Pagination -->
+		            <nav aria-label="Products pagination" class="mt-3">
+		            	<ul class="pagination justify-content-center">
+		            		<!-- Previous Button -->
+		            		<li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item" >
+		            			<a th:href="@{/products/home(
+		            						page=${currentPage-1},
+		            						search=${param.search},
+		            						categories=${param.categories}
+		            						)}" 
+		            				class="page-link" 
+		            				tabindex="-1">Previous</a>
+		            		</li>
+		            		<!-- Number of Page -->
+		            		<li class="page-item"
+		            			th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+		            			th:classappend="${i == currentPage} ? 'active'">
+		            			<a class="page-link" 
+		            			   th:href="@{/products/home(
+		            			   			page=${i},
+		            			   			search=${param.search},
+		            			   			categories=${param.categories}
+		            			   			)}"
+		            			   th:text="${i + 1}">1</a>
+		            		</li>
+		            		<!-- Next Button -->
+		            		<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+		            			<a class="page-link" th:href="@{/products/home(
+		            						page=${currentPage + 1},
+		            						search=${param.search},
+		            						categories=${param.categories}
+		            						)}">Next</a>
+		            		</li>
+		            	</ul>
+		            </nav>
+            	</div>
+            </div>	
+            
         </div>
     </div>
     

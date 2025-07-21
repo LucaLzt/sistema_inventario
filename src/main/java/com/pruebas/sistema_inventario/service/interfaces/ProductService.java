@@ -1,5 +1,6 @@
 package com.pruebas.sistema_inventario.service.interfaces;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -32,5 +33,9 @@ public interface ProductService {
 	List<ProductDTO> findByLowStock();
 
 	List<ProductMovementsDTO> popularProducts();
+
+	Page<ProductDTO> findByBranchWithFilters(Long id, String filter, List<Long> categories, int page, int size);
+
+	BigDecimal earningPerProduct(Long id, ProductDTO productDto);
 	
 }

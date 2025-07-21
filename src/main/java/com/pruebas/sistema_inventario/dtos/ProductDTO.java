@@ -14,7 +14,8 @@ public class ProductDTO {
 	private String name;
 	private String description;
 	private BigDecimal priceUnit;
-	private Integer stockActual;
+	private BigDecimal sellingPorcentage;
+	@Builder.Default Integer stockActual = 0;
 	private Integer stockMinimum;
 	@Builder.Default private boolean active = true;
 	private CategoryDTO category;

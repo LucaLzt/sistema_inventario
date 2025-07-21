@@ -13,5 +13,9 @@ public interface InventoryMovementRepository extends JpaRepository<InventoryMove
 	JpaSpecificationExecutor<InventoryMovement> {
 	
 	List<InventoryMovement> findTop5ByOrderByMovementDateDesc();
+
+	List<InventoryMovement> findByBranch_Id(Long id);
+	
+	
 	
 }

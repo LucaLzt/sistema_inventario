@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.pruebas.sistema_inventario.dtos.InventoryMovementDTO;
-import com.pruebas.sistema_inventario.dtos.ProductDTO;
 import com.pruebas.sistema_inventario.entities.TypeMovement;
+import com.pruebas.sistema_inventario.service.interfaces.BranchService;
 import com.pruebas.sistema_inventario.service.interfaces.InventoryMovementService;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
 
@@ -26,6 +26,7 @@ import lombok.Builder;
 public class MovementsController {
 	
 	private final InventoryMovementService movementService;
+	private final BranchService branchService;
 	private final ProductService productService;
 	
 	@GetMapping("/home")
@@ -46,28 +47,18 @@ public class MovementsController {
 		model.addAttribute("totalPages", filtered.getTotalPages());
 		model.addAttribute("hasNext", filtered.hasNext());
 		model.addAttribute("hasPrevious", filtered.hasPrevious());
+		model.addAttribute("branches", branchService.findAll());
 		
-		String selectedProductName = "Product";
-		if (productId != null) {
-		    ProductDTO product = productService.findById(productId);
-		    if (product != null) {
-		        selectedProductName = product.getName();
-		    }
-		}
-		
-		String selectedDateLabel = "Date";
-		if (dateFrom != null || dateTo != null) {
-		    selectedDateLabel = (dateFrom != null ? dateFrom.toString() : "") + " - " + (dateTo != null ? dateTo.toString() : "");
-		}
-		model.addAttribute("selectedDateLabel", selectedDateLabel);
-		
-		model.addAttribute("selectedProductName", selectedProductName);
+		model.addAttribute("dateFrom", dateFrom);
+		model.addAttribute("dateTo", dateTo);
+		model.addAttribute("selectedType", type);
+		model.addAttribute("productId", productId);
 
         return "movements/principal";
     }
 	
 	@PostMapping("/add")
-	public String addProduct(@ModelAttribute InventoryMovementDTO movementDto) {
+	public String addMovement(@ModelAttribute InventoryMovementDTO movementDto) {
 		movementService.save(movementDto);
 		return "redirect:/movements/home?add=ok";
 	}

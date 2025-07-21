@@ -79,8 +79,8 @@
 		            <a th:href="@{/movements/exit}" class="btn btn-outline-dark">
 		                Register Exit
 		            </a>
-		            <a th:href="@{/reports}" class="btn btn-outline-dark">
-		                View Reports
+		            <a th:href="@{/categories/add}" class="btn btn-outline-dark">
+		                Register Category
 		            </a>
 		        </div>
 		    </div>
@@ -107,19 +107,21 @@
 		                            </tr>
 		                        </thead>
 		                        <tbody>
-		                            <tr th:each="movement : ${lastMovements}">
-		                                <td th:text="${#temporals.format(movement.movementDate, 'yyyy-MM-dd HH:mm')}"></td>
-		                                <td th:text="${movement.product.name}"></td>
+		                            <tr th:each="i : ${#numbers.sequence(0,4)}">
+		                                <td th:text="${#lists.size(lastMovements) > i ? #temporals.format(lastMovements[i].movementDate, 'yyyy-MM-dd HH:mm') : '—' }"></td>
+		                                <td th:text="${#lists.size(lastMovements) > i ? lastMovements[i].product.name : '—'}"></td>
 		                                <td>
-		                                    <span class="badge" 
-		                                          th:classappend="${movement.typeMovement.name() == 'IN' ? 'bg-success bg-opacity-75 text-dark' : 
-		                                          				  (movement.typeMovement.name() == 'OUT' ? 'bg-danger bg-opacity-75 text-dark' : 
-		                                          				  (movement.typeMovement.name() == 'ADJUSTMENT' ? 'bg-warning bg-opacity-75 text-dark' : 
+		                                    <span th:if="${#lists.size(lastMovements) > i}"
+		                                    	  class="badge" 
+		                                          th:classappend="${lastMovements[i].typeMovement.name() == 'IN' ? 'bg-success bg-opacity-75 text-dark' : 
+		                                          				  (lastMovements[i].typeMovement.name() == 'OUT' ? 'bg-danger bg-opacity-75 text-dark' : 
+		                                          				  (lastMovements[i].typeMovement.name() == 'ADJUSTMENT' ? 'bg-warning bg-opacity-75 text-dark' : 
 		                                          				  'bg-secondary'))}"
-		                                          th:text="${movement.typeMovement}">
+		                                          th:text="${lastMovements[i].typeMovement}">
 		                                    </span>
+		                                    <span th:unless="${#lists.size(lastMovements) > i}">—</span>
 		                                </td>
-		                                <td th:text="${movement.amount}"></td>
+		                                <td th:text="${#lists.size(lastMovements) > i ? lastMovements[i].amount : '—'}"></td>
 		                            </tr>
 		                        </tbody>
 		                    </table>
@@ -144,11 +146,13 @@
 		                            </tr>
 		                        </thead>
 		                        <tbody>
-		                            <tr th:each="movedProduct : ${mostMovedProducts}">
-		                                <td th:text="${movedProduct.product.name}"></td>
-		                                <td th:text="${movedProduct.product.stockActual}"></td>
+		                            <tr th:each="i : ${#numbers.sequence(0, 4)}">
+		                                <td th:text="${#lists.size(mostMovedProducts) > i ? mostMovedProducts[i].product.name : '—'}"></td>
+		                                <td th:text="${#lists.size(mostMovedProducts) > i ? mostMovedProducts[i].product.stockActual : '—'}"></td>
 		                                <td>
-		                                    <span class="badge bg-info bg-opacity-75 text-dark" th:text="${movedProduct.totalMovements}"></span>
+		                                    <span class="badge bg-info bg-opacity-75 text-dark" 
+		                                    	  th:text= "${#lists.size(mostMovedProducts) > i ? mostMovedProducts[i].totalMovements : '—'}">
+		                                    </span>
 		                                </td>
 		                            </tr>
 		                        </tbody>

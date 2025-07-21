@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity 
-@Table(name = "inventory_movements")
+@Table(name = "inventory_movement")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class InventoryMovement {
@@ -55,6 +55,10 @@ public class InventoryMovement {
 	
 	@Column(name = "registered_user", nullable = false)
 	private String registeredUser = "system";
+	
+	@ManyToOne
+	@JoinColumn(name = "branch_id", nullable = false)
+	private Branch branch;
 	
 	@CreationTimestamp
 	@Column(name = "movement_date", nullable = false)

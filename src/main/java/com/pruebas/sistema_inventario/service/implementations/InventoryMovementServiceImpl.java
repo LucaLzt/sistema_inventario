@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.InventoryMovementDTO;
@@ -122,6 +123,28 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 				.stream()
 				.map(object -> modelMapper.map(object, InventoryMovementDTO.class))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<InventoryMovementDTO> findByBranch(Long id) {
+		return inventoryMovementRepository.findByBranch_Id(id)
+				.stream()
+				.map(object -> modelMapper.map(object, InventoryMovementDTO.class))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Page<InventoryMovementDTO> findByBranchWithFilters(Long branchId, LocalDate dateFrom, LocalDate dateTo, TypeMovement type,
+			String user, Long productId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		ProductDTO product = null;
+		if (productId != null) {
+		    product = productService.findById(productId);
+		}
+		Specification<InventoryMovement> spec = InventoryMovementSpecification.filterByBranch(branchId, dateFrom, dateTo, 
+				type, user, product);
+		Page<InventoryMovement> movements = inventoryMovementRepository.findAll(spec, pageable);
+	    return movements.map(object -> modelMapper.map(object, InventoryMovementDTO.class));
 	}
 	
 }
