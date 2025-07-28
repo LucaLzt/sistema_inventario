@@ -56,7 +56,9 @@
 						<div class="col">
 							<div class="dropdown w-100">
 								<button class="form-control dropdown-toggle text-start" type="button" data-bs-toggle="dropdown">
-									<span th:if="${param.categoriesPr == null or #lists.isEmpty(param.categoriesPr)}">Categories</span>
+									<span th:if="${param.categoriesPr == null or #lists.isEmpty(param.categoriesPr) or param.categoriesPr.size() == 1 and param.categoriesPr[0] == ''}">
+										Categories
+									</span>
 		                            <span th:if="${param.categoriesPr != null and !#lists.isEmpty(param.categoriesPr)}">
 		                                <span th:each="cat, iterStat : ${categories}" 
 		                                      th:if="${#lists.contains(param.categoriesPr, cat.id.toString())}">

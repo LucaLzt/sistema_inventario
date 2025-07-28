@@ -147,7 +147,7 @@ public class ProductServiceImpl implements ProductService {
 			
 			if(mov.getTypeMovement() == TypeMovement.OUT) { // MovementTotal = (PriceUnit * SellingPercentage) * Amount
 				movementTotal = mov.getPriceUnit()
-						.multiply(productDto.getSellingPorcentage())
+						.multiply(productDto.getSellingPercentage())
 						.multiply(BigDecimal.valueOf(mov.getAmount()));
 				earnings = earnings.add(movementTotal);
 			} 

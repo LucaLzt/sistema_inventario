@@ -18,13 +18,41 @@
 						  method="post"
 						  th:object="${branch}">
 						<div class="modal-body">
+							
+							<input type="hidden" name="filter" th:value="${filter}"/>
+							
+							<!-- General Alert for Errors -->
+							<div th:if="${#fields?.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">
+								<strong>Please correct the following errors:</strong>
+								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+							</div>
+							
+							<!-- Name Field -->
 							<div class="mb-3">
 								<label class="form-label">Name</label>
-								<input type="text" th:field="*{name}" class="form-control" autocomplete="off"/>
+								<input type="text" 
+									   th:field="*{name}" 
+									   class="form-control" 
+									   th:classappend="${#fields?.hasErrors('name')} ? 'is-invalid' : ''"
+									   autocomplete="off"/>
+								<!-- Specific Error for Name -->
+								<div th:if="${#fields?.hasErrors('name')}" class="invalid-feedback">
+									<div th:each="error : ${#fields.errors('name')}" th:text="${error}"></div>
+								</div>
 							</div>
+							
+							<!-- Address Field -->
 							<div class="mb-3">
 								<label class="form-label">Address</label>
-								<input type="text" th:field="*{address}" class="form-control" autocomplete="off"/>
+								<input type="text" 
+									   th:field="*{address}" 
+									   class="form-control" 
+									   th:classappend="${#fields?.hasErrors('address')} ? 'is-invalid' : ''"
+									   autocomplete="off"/>
+							    <!-- Specific Error for Address -->
+								<div th:if="${#fields?.hasErrors('address')}" class="invalid-feedback">
+									<div th:each="error : ${#fields.errors('address')}" th:text="${error}"></div>
+								</div>
 							</div>
 						</div>
 						<div class="modal-footer border-secondary">
@@ -36,6 +64,5 @@
 			</div>
 		</div>
 	</div>
-	
 </body>
 </html>

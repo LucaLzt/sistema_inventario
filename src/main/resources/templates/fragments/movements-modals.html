@@ -17,7 +17,21 @@
 	                <form th:action="@{/movements/add}" 
 						  method="post" 
 						  th:object="${movement}">
+						  
+						<input type="hidden" name="dateFrom" th:value="${dateFrom != null ? #temporals.format(dateFrom, 'yyyy-MM-dd') : ''}"/>
+					    <input type="hidden" name="dateTo" th:value="${dateTo != null ? #temporals.format(dateTo, 'yyyy-MM-dd') : ''}"/>
+					    <input type="hidden" name="type" th:value="${selectedType}"/>
+					    <input type="hidden" name="productId" th:value="${productId}"/>
+					    <input type="hidden" name="page" th:value="${currentPage}"/>
+						  
+						  
 	                    <div class="modal-body">
+	                    	<!-- General Alert for Errors -->
+							<div th:if="${#fields?.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">
+								<strong>Please correct the following errors:</strong>
+								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+							</div>
+	                    	
 	                        <div class="row">
 	                            <div class="col-md-6">
 	                                <div class="mb-3">
@@ -26,9 +40,14 @@
 	                                        <option value="" disabled selected>Select product...</option>
 	                                        <option th:each="prod : ${products}"
 	                                                th:value="${prod.id}"
-	                                                th:text="${prod.name}">
+	                                                th:text="${prod.name}"
+	                                       			th:classappend="${#fields?.hasErrors('product.id')} ? 'is-invalid' : ''">
 	                                        </option>
 	                                    </select>
+	                                    <!-- Specific Error for Category -->
+			                            <div th:if="${#fields?.hasErrors('product.id')}" class="invalid-feedback">
+										    <div th:each="error : ${#fields.errors('product.id')}" th:text="${error}"></div>
+										</div>
 	                                </div>
 	                            </div>
 	                            <div class="col-md-6">
@@ -38,9 +57,14 @@
 	                                        <option value="" disabled selected>Select type...</option>
 	                                        <option th:each="type : ${types}"
 	                                                th:value="${type}"
-	                                                th:text="${type}">
+	                                                th:text="${type}"
+	                                       	 		th:classappend="${#fields?.hasErrors('typeMovement')} ? 'is-invalid' : ''">
 	                                        </option>
 	                                    </select>
+	                                    <!-- Specific Error for Category -->
+			                            <div th:if="${#fields?.hasErrors('typeMovement')}" class="invalid-feedback">
+										    <div th:each="error : ${#fields.errors('typeMovement')}" th:text="${error}"></div>
+										</div>
 	                                </div>
 	                            </div>
 	                        </div>
@@ -48,39 +72,75 @@
 	                            <div class="col-md-6">
 	                                <div class="mb-3">
 	                                    <label class="form-label">Amount</label>
-	                                    <input type="number" th:field="*{amount}" class="form-control">
+	                                    <input type="number" 
+	                                    	   th:field="*{amount}" 
+	                                    	   class="form-control"
+	                                           th:classappend="${#fields?.hasErrors('amount')} ? 'is-invalid' : ''">
 	                                </div>
+	                                <!-- Specific Error for Amount -->
+									<div th:if="${#fields?.hasErrors('amount')}" class="invalid-feedback">
+										<div th:each="error : ${#fields.errors('amount')}" th:text="${error}"></div>
+									</div>
 	                            </div>
 	                            <div class="col-md-6">
 	                                <div class="mb-3">
 	                                    <label class="form-label">Movement Date</label>
-	                                    <input type="datetime-local" th:field="*{movementDate}" class="form-control">
+	                                    <input type="datetime-local" 
+	                                    	   th:field="*{movementDate}" 
+	                                    	   class="form-control"
+	                                           th:classappend="${#fields?.hasErrors('movementDate')} ? 'is-invalid' : ''">
 	                                </div>
+	                                <!-- Specific Error for Movement Date -->
+									<div th:if="${#fields?.hasErrors('movementDate')}" class="invalid-feedback">
+										<div th:each="error : ${#fields.errors('movementDate')}" th:text="${error}"></div>
+									</div>
 	                            </div>
 	                        </div>
 	                        <div class="row">
 	                        	<div class="col-md-6">
 			                        <div class="mb-3">
 			                            <label class="form-label">Motive</label>
-			                            <input type="text" th:field="*{motive}" class="form-control" autocomplete="off">
+			                            <input type="text" 
+			                            	   th:field="*{motive}" 
+			                            	   class="form-control" 
+	                                           th:classappend="${#fields?.hasErrors('motive')} ? 'is-invalid' : ''"
+			                            	   autocomplete="off">
 			                        </div>
+	                                <!-- Specific Error for Motive -->
+									<div th:if="${#fields?.hasErrors('motive')}" class="invalid-feedback">
+										<div th:each="error : ${#fields.errors('motive')}" th:text="${error}"></div>
+									</div>
 		                        </div>
 		                        <div class="col-md-6">
 			                        <div class="mb-3">
 			                            <label class="form-label">Registered User</label>
-			                            <input type="text" th:field="*{registeredUser}" class="form-control" readonly>
+			                            <input type="text" 
+			                            	   th:field="*{registeredUser}" 
+			                            	   class="form-control" 
+	                                           style="background-color: #e9ecef; cursor: default;"
+	                                           th:classappend="${#fields?.hasErrors('registeredUser')} ? 'is-invalid' : ''"
+			                            	   readonly>
 			                        </div>
+	                                <!-- Specific Error for Registered User -->
+									<div th:if="${#fields?.hasErrors('registeredUser')}" class="invalid-feedback">
+										<div th:each="error : ${#fields.errors('registeredUser')}" th:text="${error}"></div>
+									</div>
 		                        </div>
 	                        </div>
 	                        <div class="mb-3">
 	                            <label class="form-label">Branches</label>
 	                            <select class="form-select" th:field="*{branch.id}">
-	                                <option value="" disabled selected>Select category...</option>
+	                                <option value="" disabled selected>Select branch...</option>
 	                                <option th:each="branch : ${branches}"
 	                                        th:value="${branch.id}"
-	                                        th:text="${branch.name + ' - ' + branch.address}">
+	                                        th:text="${branch.name + ' - ' + branch.address}"
+	                                        th:classappend="${#fields?.hasErrors('branch.id')} ? 'is-invalid' : ''">
 	                                </option>
 	                            </select>
+	                            <!-- Specific Error for Branch Name -->
+	                            <div th:if="${#fields?.hasErrors('branch.id')}" class="invalid-feedback">
+								    <div th:each="error : ${#fields.errors('branch.id')}" th:text="${error}"></div>
+								</div>
 	                        </div>
 	                    </div>
 	                    <div class="modal-footer border-secondary">

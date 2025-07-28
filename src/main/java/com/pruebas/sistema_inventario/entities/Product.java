@@ -42,8 +42,8 @@ public class Product {
 	@Column(name = "price_unit", precision = 10, scale = 2, nullable = false)
 	private BigDecimal priceUnit;
 
-	@Column(name = "selling_procentage", precision = 10, scale = 2, nullable = false)
-	private BigDecimal sellingPorcentage;
+	@Column(name = "selling_percentage", precision = 10, scale = 2, nullable = false)
+	private BigDecimal sellingPercentage;
 	
 	@Column(name = "stock_actual", nullable = false)
 	private Integer stockActual;

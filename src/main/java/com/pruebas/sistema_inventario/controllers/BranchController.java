@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import com.pruebas.sistema_inventario.service.interfaces.CategoryService;
 import com.pruebas.sistema_inventario.service.interfaces.InventoryMovementService;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
 
+import jakarta.validation.Valid;
 import lombok.Builder;
 
 @Controller @Builder
@@ -42,7 +44,27 @@ public class BranchController {
 		List<BranchDTO> branches = branchService.findByFilter(filter);
 		model.addAttribute("branch", new BranchDTO());
 		model.addAttribute("branches", branches);
+		model.addAttribute("filter", filter);
 		return "branch/principal";
+	}
+	
+	@PostMapping("/add")
+	public String addBranch(@Valid @ModelAttribute("branch") BranchDTO branchDto,
+			BindingResult result,
+			@RequestParam(required = false) String filter,
+			Model model) {
+		if (result.hasErrors()) {
+			List<BranchDTO> branches = branchService.findByFilter(filter);
+			model.addAttribute("branches", branches);
+			model.addAttribute("filter", filter);
+			
+	        // If there are validation errors, show the modal to add a new branch
+	        model.addAttribute("showAddBranchModal", true);
+			return "branch/principal";
+		}
+		
+		branchService.save(branchDto);
+		return "redirect:/branches/home?save=ok";
 	}
 	
 	@GetMapping("/{id}/details")
@@ -80,7 +102,7 @@ public class BranchController {
 	private void setupProductsData(Long branchId, String search, List<Long> categories, int page, Model model) {
 		int pageSize = 5;
 		
-		String searchParam = (search != null && !search.isBlank()) ? null : search;
+		String searchParam = (search != null && !search.isBlank()) ? search : null;
 		
 		Page<ProductDTO> productsFiltered = productService.findByBranchWithFilters(branchId, searchParam, categories, page, pageSize);
 		
@@ -129,12 +151,6 @@ public class BranchController {
 		model.addAttribute("categories", categoryService.findAll());
 		model.addAttribute("types", Arrays.asList(TypeMovement.values()));
 		model.addAttribute("products", productService.findAll());
-	}
-	
-	@PostMapping("/add")
-	public String addBranch(Model model, @ModelAttribute BranchDTO branchDto) {
-		branchService.save(branchDto);
-		return "redirect:/branches/home?save=ok";
 	}
 	
 }

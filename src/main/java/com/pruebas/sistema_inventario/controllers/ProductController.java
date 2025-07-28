@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,12 +20,14 @@ import com.pruebas.sistema_inventario.service.interfaces.CategoryService;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
 import com.pruebas.sistema_inventario.utils.ProductCodeGenerator;
 
+import jakarta.validation.Valid;
 import lombok.Builder;
 
 @Controller @Builder
 @RequestMapping("/products")
 public class ProductController {
 	
+	private static final int PAGE_SIZE = 11; // Default page size for pagination
 	private final ProductService productService;
 	private final CategoryService categoryService;
 	private final ProductCodeGenerator productCodeGenerator;
@@ -32,11 +35,10 @@ public class ProductController {
 	@GetMapping("/home")
 	public String products(
 			@RequestParam(required = false) String search,
-			@RequestParam(required = false) List<Long> categories,
+			@RequestParam(required = false) List<Long> categoriesIds,
 			@RequestParam(defaultValue = "0") int page,
 			Model model) {
-		int pageSize = 11;
-		Page<ProductDTO> filtered = productService.findFiltered(search, categories, page, pageSize);
+		Page<ProductDTO> filtered = productService.findFiltered(search, categoriesIds, page, PAGE_SIZE);
 		model.addAttribute("product", new ProductDTO());
 		model.addAttribute("products", filtered);
 		model.addAttribute("categories", categoryService.findAll());
@@ -44,21 +46,66 @@ public class ProductController {
 		model.addAttribute("totalPages", filtered.getTotalPages());
 		model.addAttribute("hasNext", filtered.hasNext());
 		model.addAttribute("hasPrevious", filtered.hasPrevious());
+	    model.addAttribute("categoriesIds", categoriesIds);
+	    model.addAttribute("search", search);
 
 		return "products/principal";
 	}
 	
 	@PostMapping("/add")
-	public String addProduct(@ModelAttribute ProductDTO product) {
-		product.setCode(productCodeGenerator.generateUserCode("LucaLzt"));
-		product.setSellingPorcentage(product.getSellingPorcentage().divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP).add(BigDecimal.ONE));
-		productService.save(product);
+	public String addProduct(@Valid @ModelAttribute("product") ProductDTO productDto,
+			BindingResult result, 
+			@RequestParam(required = false) String search,
+			@RequestParam(required = false) List<Long> categoriesIds,
+			@RequestParam(defaultValue = "0") int page,
+			Model model) {
+		if (result.hasErrors()) {
+			Page<ProductDTO> filtered = productService.findFiltered(search, categoriesIds, page, PAGE_SIZE);
+			
+			model.addAttribute("products", filtered);
+			model.addAttribute("categories", categoryService.findAll());
+			model.addAttribute("totalPages", filtered.getTotalPages());
+			model.addAttribute("hasNext", filtered.hasNext());
+			model.addAttribute("hasPrevious", filtered.hasPrevious());
+			model.addAttribute("search", search);
+			model.addAttribute("currentPage", page);
+			model.addAttribute("categoriesIds", categoriesIds);
+			
+			// If there are validation errors, show the modal to add a new product
+			model.addAttribute("showAddProductModal", true);
+			return "products/principal";
+		}
+		productDto.setCode(productCodeGenerator.generateUserCode("LucaLzt"));
+		productDto.setSellingPercentage(productDto.getSellingPercentage()
+				.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
+				.add(BigDecimal.ONE));
+		productService.save(productDto);
 		return "redirect:/products/home?add=ok";
 	}
 	
 	@PostMapping("/edit")
-	public String editProduct(@ModelAttribute ProductDTO productDto) {
-		System.out.println(productDto.toString());
+	public String editProduct(@Valid @ModelAttribute("product") ProductDTO productDto,
+			BindingResult result, 
+			@RequestParam(required = false) String search,
+			@RequestParam(required = false) List<Long> categoriesIds,
+			@RequestParam(defaultValue = "0") int page,
+			Model model) {
+		if (result.hasErrors()) {
+			Page<ProductDTO> filtered = productService.findFiltered(search, categoriesIds, page, PAGE_SIZE);
+			
+			model.addAttribute("products", filtered);
+			model.addAttribute("categories", categoryService.findAll());
+			model.addAttribute("totalPages", filtered.getTotalPages());
+			model.addAttribute("hasNext", filtered.hasNext());
+			model.addAttribute("hasPrevious", filtered.hasPrevious());
+			model.addAttribute("search", search);
+			model.addAttribute("currentPage", page);
+			model.addAttribute("categoriesIds", categoriesIds);
+			
+			// If there are validation errors, show the modal to edit the product
+			model.addAttribute("showEditProductModal", true);
+			return "products/principal";
+		}
 		productService.update(productDto.getId(), productDto);
 		return "redirect:/products/home?update=ok";
 	}
