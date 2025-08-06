@@ -6,7 +6,7 @@
 </head>
 <body>
 	<!-- Modal Add Product -->
-	<div th:fragment="modal-add-product(categories)">
+	<div th:fragment="modal-add-product(categories, fromView)">
 	    <div class="modal fade" id="modalAddProduct" tabindex="-1">
 	        <div class="modal-dialog modal-lg">
 	            <div class="modal-content">
@@ -19,11 +19,14 @@
 	                      th:object="${product}">
 	                      
 	                     <!-- Hidden fields for filters and pagination -->
-						<input type="hidden" name="search" th:value="${search}">
-						<input type="hidden" name="page" th:value="${currentPage}">
+						<input type="hidden" name="search" th:value="${search}"/>
+						<input type="hidden" name="page" th:value="${currentPage}"/>
 						<th:block th:if="${categoriesIds != null}" th:each="catId : ${categoriesIds}">
-						    <input type="hidden" name="categoriesIds" th:value="${catId}">
+						    <input type="hidden" name="categoriesIds" th:value="${catId}"/>
 						</th:block>
+						
+						<!-- Hidden field for return the origin view -->
+						<input type="hidden" name="fromView" th:value="${fromView}"/>
 	                      
 	                    <div class="modal-body">
 	                    	<!-- General Alert for Errors -->
@@ -126,7 +129,6 @@
 	                                <option th:each="cat : ${categories}"
 	                                        th:value="${cat.id}"
 	                                        th:text="${cat.name}"
-	                                        th:disabled="${cat.active == false}"
 	                                        th:classappend="${#fields?.hasErrors('category.id')} ? 'is-invalid' : ''">
 	                                </option>
 	                            </select>
@@ -274,7 +276,6 @@
 	                                <option th:each="cat : ${categories}"
 	                                        th:value="${cat.id}"
 	                                        th:text="${cat.name}"
-	                                        th:disabled="${cat.active == false}"
 	                                        th:classappend="${#fields?.hasErrors('category.id')} ? 'is-invalid' : ''">
 	                                </option>
 	                            </select>

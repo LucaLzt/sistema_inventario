@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 	<meta charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>Products - Inventory System</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 	<!-- Navbar -->
@@ -119,46 +121,66 @@
 			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].stockActual : '—'}"></td>
 			                        <td th:text="${#lists.size(products.content) > i ? (products.content[i].active ? 'Active' : 'Inactive') : '—'}"></td>
 		                    		<td>
-		                    			<!-- Edit Button - Only enabld if product exists -->
-							        	<button th:if="${#lists.size(products.content) > i}" 
-		                            	        type="button" 
-		                            	        class="btn btn-sm btn-outline-dark"
-		                            	        data-bs-toggle="modal"
-		                            	        data-bs-target="#modalEditProduct"
-		                            	        th:attr="data-id=${products.content[i].id},
-		                                                 data-name=${products.content[i].name},
-		                                                 data-code=${products.content[i].code},
-		                                                 data-description=${products.content[i].description},
-		                                                 data-priceunit=${products.content[i].priceUnit},
-		                                                 data-stockactual=${products.content[i].stockActual},
-		                                                 data-stockminimum=${products.content[i].stockMinimum},
-		                                                 data-categoryid=${products.content[i].category.id},
-		                                                 data-active=${products.content[i].active}">
-		                                	Edit
-							        	</button>
-							        	
-							        	<!-- Disabled Edit Button for empty rows -->
-							        	<button th:if="${#lists.size(products.content) <= i}"
-							                    class="btn btn-sm btn-outline-secondary"
-							                    disabled>
-							                Edit
-							        	</button>
-							        	
-							        	<!-- Delete Button - Only enabled if product exists -->
-							            <form th:if="${#lists.size(products.content) > i}"
-							            	  th:action="@{/products/delete/{id}(id=${products.content[i].id})}" 
-							            	  method="post" 
-							            	  style="display:inline;">
-										    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
-										</form>
+		                    			<div sec:authorize="hasRole('ADMIN')">
+			                    			<!-- Edit Button - Only enabld if product exists -->
+								        	<button th:if="${#lists.size(products.content) > i}" 
+			                            	        type="button" 
+			                            	        class="btn btn-sm btn-outline-dark"
+			                            	        data-bs-toggle="modal"
+			                            	        data-bs-target="#modalEditProduct"
+			                            	        th:attr="data-id=${products.content[i].id},
+			                                                 data-name=${products.content[i].name},
+			                                                 data-code=${products.content[i].code},
+			                                                 data-description=${products.content[i].description},
+			                                                 data-priceunit=${products.content[i].priceUnit},
+			                                                 data-stockactual=${products.content[i].stockActual},
+			                                                 data-stockminimum=${products.content[i].stockMinimum},
+			                                                 data-categoryid=${products.content[i].category.id},
+			                                                 data-active=${products.content[i].active}">
+			                                	Edit
+								        	</button>
+								        	
+								        	<!-- Disabled Edit Button for empty rows -->
+								        	<button th:if="${#lists.size(products.content) <= i}"
+								                    class="btn btn-sm btn-outline-secondary"
+								                    disabled>
+								                Edit
+								        	</button>
+								        	
+								        	<!-- Delete Button - Only enabled if product exists -->
+								            <form th:if="${#lists.size(products.content) > i}"
+								            	  th:action="@{/products/delete/{id}(id=${products.content[i].id})}" 
+								            	  method="post" 
+								            	  style="display:inline;">
+											    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+											</form>
+											
+											<!-- Disabled Delete Button for empty rows -->
+											<form th:if="${#lists.size(products.content) <= i}"
+												  style="display:inline;">
+												<button class="btn btn-sm btn-outline-secondary"
+														type="button"
+														disabled>Delete</button>
+											</form>
+										</div>
 										
-										<!-- Disabled Delete Button for empty rows -->
-										<form th:if="${#lists.size(products.content) <= i}"
-											  style="display:inline;">
-											<button class="btn btn-sm btn-outline-secondary"
-													type="button"
-													disabled>Delete</button>
-										</form>
+										<div sec:authorize="hasRole('USER')">
+											<!-- Edit Button - Disabled for User -->
+								        	<button type="button" 
+			                            	        class="btn btn-sm btn-outline-dark"
+			                            	        disabled>
+			                                	Edit
+								        	</button>
+								        	<!-- Delete Button - Disabled for User -->
+											<form style="display:inline;">
+												<button class="btn btn-sm btn-outline-secondary"
+														type="button"
+														disabled>
+													Delete
+												</button>
+											</form>
+										</div>
+										
 		                    		</td>
 		                    	</tr>
 		                    </tbody>
@@ -207,7 +229,7 @@
     </div>
     
 	<!-- Modals -->
-	<div th:replace="~{fragments/product-modals :: modal-add-product(${categories})}"></div>
+	<div th:replace="~{fragments/product-modals :: modal-add-product(${categories}, 'product')}"></div>
 	<div th:replace="~{fragments/product-modals :: modal-edit-product(${categories})}"></div>
 	
 	<!-- Script to show the add product modal if the flag is set -->

@@ -6,7 +6,7 @@
 </head>
 <body>
 	<!-- Modal Add Movement -->
-	<div th:fragment="modal-add-movement(products, types, branches)">
+	<div th:fragment="modal-add-movement(products, types, branches, fromView)">
 	    <div class="modal fade" id="modalAddMovement" tabindex="-1">
 	        <div class="modal-dialog modal-lg">
 	            <div class="modal-content">
@@ -17,13 +17,16 @@
 	                <form th:action="@{/movements/add}" 
 						  method="post" 
 						  th:object="${movement}">
-						  
+						
+						<!-- Hidden fields to maintain state -->
 						<input type="hidden" name="dateFrom" th:value="${dateFrom != null ? #temporals.format(dateFrom, 'yyyy-MM-dd') : ''}"/>
 					    <input type="hidden" name="dateTo" th:value="${dateTo != null ? #temporals.format(dateTo, 'yyyy-MM-dd') : ''}"/>
 					    <input type="hidden" name="type" th:value="${selectedType}"/>
 					    <input type="hidden" name="productId" th:value="${productId}"/>
 					    <input type="hidden" name="page" th:value="${currentPage}"/>
 						  
+						<!-- Hidden field for return the origin view -->
+						<input type="hidden" name="fromView" th:value="${fromView}"/>
 						  
 	                    <div class="modal-body">
 	                    	<!-- General Alert for Errors -->
@@ -53,7 +56,7 @@
 	                            <div class="col-md-6">
 	                                <div class="mb-3">
 	                                    <label class="form-label">Movement Type</label>
-	                                    <select class="form-select" th:field="*{typeMovement}">
+	                                    <select class="form-select" th:field="*{typeMovement}" id="typeMovementSelect">
 	                                        <option value="" disabled selected>Select type...</option>
 	                                        <option th:each="type : ${types}"
 	                                                th:value="${type}"

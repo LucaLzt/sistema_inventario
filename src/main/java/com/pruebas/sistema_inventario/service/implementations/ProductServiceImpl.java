@@ -150,11 +150,14 @@ public class ProductServiceImpl implements ProductService {
 						.multiply(productDto.getSellingPercentage())
 						.multiply(BigDecimal.valueOf(mov.getAmount()));
 				earnings = earnings.add(movementTotal);
+				System.out.println("OUT Actual Earnings: " + earnings);
+				System.out.println("Seelling Percentage: " + productDto.getSellingPercentage());
 			} 
 			else if(mov.getTypeMovement() == TypeMovement.IN) { // MovementTotal = PriceUnit * Amount
 				movementTotal = mov.getPriceUnit()
 						.multiply(BigDecimal.valueOf(mov.getAmount()));
 				earnings = earnings.subtract(movementTotal);
+				System.out.println("IN Actual Earnings: " + earnings);
 			}	
 		}
 		return earnings;

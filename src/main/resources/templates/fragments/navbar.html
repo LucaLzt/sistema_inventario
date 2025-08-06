@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 	<meta charset="UTF-8" />
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,10 +41,11 @@
 	                       class="nav-link">Branches
 	                    </a>
 	                </li>
-	                <li class="nav-item">
-	                    <span class="navbar-text">LucaLzt</span>
-	                </li>
 	            </ul>
+            	<a th:href="@{/user/profile}" class="nav-link ms-auto me-2 d-flex align-items-center gap-2">
+            		<span class="navbar-text text-white">Mi Perfil</span>
+            		<i class="fas fa-user-circle fa-2x" style="color: white; "></i>
+            	</a>
 	        </div>
 	    </div>
 	</nav>

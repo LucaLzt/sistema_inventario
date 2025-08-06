@@ -27,7 +27,4 @@ public class Category {
 	@Column(name = "description", nullable = true)
 	private String description;
 	
-	@Column(name = "active")
-	private boolean active = true;
-	
 }

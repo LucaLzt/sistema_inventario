@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>Home</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Navbar fragment -->
@@ -17,7 +19,7 @@
 	            <div class="card bg-primary bg-opacity-25 text-primary border-primary text-center shadow-sm">
 	                <div class="card-body">
 	                    <h4>Total Products</h4>
-	                    <h2 class="fw-bold" th:text="${totalProducts}">1,234</h2>
+	                    <h2 class="fw-bold" th:text="${totalProducts}">-</h2>
 	                </div>
 	            </div>
 	        </div>
@@ -25,7 +27,7 @@
 	            <div class="card bg-success bg-opacity-25 text-success border-success text-center shadow-sm">
 	                <div class="card-body">
 	                    <h4>Stock Available</h4>
-	                    <h2 class="fw-bold" th:text="${stockAvailable}">8,567</h2>
+	                    <h2 class="fw-bold" th:text="${stockAvailable}">-</h2>
 	                </div>
 	            </div>
 	        </div>
@@ -33,7 +35,7 @@
 	            <div class="card bg-warning bg-opacity-25 text-warning border-warning text-center shadow-sm">
 	                <div class="card-body">
 	                    <h4>Low Stock</h4>
-	                    <h2 class="fw-bold" th:text="${lowStock}">23</h2>
+	                    <h2 class="fw-bold" th:text="${lowStock}">-</h2>
 	                </div>
 	            </div>
 	        </div>
@@ -41,7 +43,7 @@
 	            <div class="card bg-danger bg-opacity-25 text-danger border-danger text-center shadow-sm" id="cardTotalProducts">
 	                <div class="card-body">
 	                    <h4>Out of Stock</h4>
-	                    <h2 class="fw-bold" th:text="${outOfStock}">5</h2>
+	                    <h2 class="fw-bold" th:text="${outOfStock}">-</h2>
 	                </div>
 	            </div>
 	        </div>
@@ -65,25 +67,24 @@
 	</div>
 	
 	<!-- Fast Access -->
-	<div class="container-fluid">
-		<div class="row mb-4">
-		    <div class="col-12">
-		        <h4 class="mb-3">Quick Actions</h4>
-		        <div class="d-flex gap-2 flex-wrap">
-		            <a th:href="@{/products/new}" class="btn btn-outline-dark" >
-		                Add Product
-		            </a>
-		            <a th:href="@{/movements/entrance}" class="btn btn-outline-dark">
-		                Register Entry
-		            </a>
-		            <a th:href="@{/movements/exit}" class="btn btn-outline-dark">
-		                Register Exit
-		            </a>
-		            <a th:href="@{/categories/add}" class="btn btn-outline-dark">
-		                Register Category
-		            </a>
-		        </div>
-		    </div>
+	<div sec:authorize="hasRole('ADMIN')">
+		<div class="container-fluid">
+			<div class="row mb-4">
+			    <div class="col-12">
+			        <h4 class="mb-3">Quick Actions</h4>
+			        <div class="d-flex gap-2 flex-wrap">
+			            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalAddProduct">
+			                Add Product
+			            </button>
+			            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalAddMovement">
+			                Register Movement
+			            </button>
+			            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalAddCategory">
+			                Register Category
+			            </button>
+			        </div>
+			    </div>
+			</div>
 		</div>
 	</div>
 	
@@ -164,6 +165,33 @@
 		</div>
 	</div>
 	
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Modals -->
+	<div th:replace="~{fragments/product-modals :: modal-add-product(${categories}, 'home')}"></div>
+	<div th:replace="~{fragments/movements-modals :: modal-add-movement(${products}, ${types}, ${branches}, 'home')}"></div>
+	<div th:replace="~{fragments/category-modals :: modal-add-category}"></div>
+	
+	<!-- Script to show the add product modal if the flag is set -->
+	<script th:if="${showAddProductModal}">
+	    document.addEventListener('DOMContentLoaded', function() {
+	        var modal = new bootstrap.Modal(document.getElementById('modalAddProduct'));
+	        modal.show();
+	    });
+	</script>
+	<!-- Script to show the add movement modal if the flag is set -->
+	<script th:if="${showAddMovementModal}">
+	    document.addEventListener('DOMContentLoaded', function() {
+	        var modal = new bootstrap.Modal(document.getElementById('modalAddMovement'));
+	        modal.show();
+	    });
+	</script>
+	<!-- Script to show the add category modal if the flag is set -->
+	<script th:if="${showAddCategoryModal}">
+	    document.addEventListener('DOMContentLoaded', function() {
+	        var modal = new bootstrap.Modal(document.getElementById('modalAddCategory'));
+	        modal.show();
+	    });
+	</script>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

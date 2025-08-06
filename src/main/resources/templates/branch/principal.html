@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Branches - Inventory System</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 	<!-- Navbar -->
@@ -32,10 +34,12 @@
 		                <a th:href="@{/branches/home}" class="btn btn-outline-secondary">Reset</a>
 		            </div>
 		        </form>
-		        <div class="ms-auto me-3">
-		            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalAddBranch">
-		                Register Branch
-		            </button>
+		        <div sec:authorize="hasRole('ROLE_ADMIN')">
+			        <div class="ms-auto me-3">
+			            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalAddBranch">
+			                Register Branch
+			            </button>
+			        </div>
 		        </div>
 		    </div>
 		</div>
