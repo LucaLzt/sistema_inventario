@@ -76,7 +76,7 @@
 				        </div>
 				        
 				        <!-- Buttons -->
-				        <div class="col-md-4 col-12 mt-2 mt-md-0 d-flex">
+				        <div sec:authorize="hasRole('ADMIN')" class="col-md-4 col-12 mt-2 mt-md-0 d-flex">
 				            <button type="submit" class="btn btn-outline-dark me-2">Filter</button>
 				            <a th:href="@{/products/home}" class="btn btn-outline-secondary me-2">Reset</a>
 				        	<button type="button" class="btn btn-outline-dark ms-auto" data-bs-toggle="modal" data-bs-target="#modalAddProduct">

@@ -1,5 +1,6 @@
 package com.pruebas.sistema_inventario.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -32,5 +33,8 @@ public class Branch {
 	
 	@OneToMany(mappedBy = "branch")
 	private List<InventoryMovement> inventoryMovements;
+	
+	@OneToMany(mappedBy = "branch")
+	private List<Employee> employees = new ArrayList<>();
 	
 }
