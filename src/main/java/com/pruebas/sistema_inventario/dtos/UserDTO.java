@@ -1,5 +1,9 @@
 package com.pruebas.sistema_inventario.dtos;
 
+import java.time.LocalDateTime;
+
+import com.pruebas.sistema_inventario.entities.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +17,7 @@ public class UserDTO {
 	private String password;
 	private String fullName;
 	private Long mobile;
+	private Role role;
+	private LocalDateTime registeredAt;
 	
 }

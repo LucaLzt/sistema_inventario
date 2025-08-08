@@ -86,5 +86,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		// Delete Employee by ID
 		employeeRepository.delete(employee);
 	}
+
+	@Override
+	public EmployeeDTO findByEmail(String email) {
+		// Find Employee by email
+		Employee employee = employeeRepository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("Employee not found with email: " + email));
+		
+		// Convert to EmployeeDTO and return
+		EmployeeDTO employeeDto = modelMapper.map(employee, EmployeeDTO.class);
+		return employeeDto;
+	}
 	
 }

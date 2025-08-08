@@ -47,7 +47,7 @@
                                 <label for="branchId" class="form-label">Branch</label>
                                 <select id="branchId" class="form-select" th:field="*{branchId}">
                                     <option value="">Select branch...</option>
-                                    <option th:each="b : ${branches}" th:value="${b.id}" th:text="${b.name}"></option>
+                                    <option th:each="b : ${branches}" th:value="${b.id}" th:text="${b.name + ' - ' + b.address}"></option>
                                 </select>
                                 <div class="text-danger small" th:if="${#fields.hasErrors('branchId')}" th:errors="*{branchId}"></div>
                             </div>

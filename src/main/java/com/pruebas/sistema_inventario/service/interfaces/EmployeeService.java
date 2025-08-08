@@ -9,5 +9,6 @@ public interface EmployeeService {
 	EmployeeDTO findById(Long id);
 	EmployeeDTO update(Long id, EmployeeDTO employeeDto);
 	void deleteById(Long id);
+	EmployeeDTO findByEmail(String email);
 	
 }
