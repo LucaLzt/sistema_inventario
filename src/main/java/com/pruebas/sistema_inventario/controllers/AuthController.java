@@ -23,7 +23,7 @@ public class AuthController {
 	private final BranchService branchService;
 	
 	@GetMapping("/login")
-	public String login() {
+	public String showLoginForm() {
 		return "auth/login";
 	}
 	
@@ -43,9 +43,9 @@ public class AuthController {
         } else {
             model.addAttribute("error", "Invalid user type");
             model.addAttribute("branches", branchService.findAll());
-            return "register";
+            return "auth/register";
         }
-        return "redirect:/login";
+        return "redirect:/auth/login";
     }
 	
 }

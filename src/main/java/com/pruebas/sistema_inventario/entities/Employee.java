@@ -14,7 +14,7 @@ import lombok.ToString;
 public class Employee extends User {
 	
 	@ManyToOne
-	@JoinColumn(name = "branch_id")
+	@JoinColumn(name = "branch_id", nullable = true)
 	private Branch branch;
 	
 }

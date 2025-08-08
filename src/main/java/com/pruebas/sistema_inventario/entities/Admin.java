@@ -12,7 +12,7 @@ import lombok.ToString;
 @DiscriminatorValue("ADMIN")
 public class Admin extends User {
 	
-	@Column(name = "super_admin", nullable = false)
+	@Column(name = "super_admin", nullable = true)
 	private boolean superAdmin;
 	
 }

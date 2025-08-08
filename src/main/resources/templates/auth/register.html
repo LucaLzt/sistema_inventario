@@ -18,7 +18,7 @@
                                 <label for="type" class="form-label">User Type</label>
                                 <select id="type" class="form-select" th:field="*{type}">
                                     <option value="" disabled>Select type...</option>
-                                    <option value="CLIENT">Client</option>
+                                    <option value="EMPLOYEE">Employee</option>
                                     <option value="ADMIN">Administrator</option>
                                 </select>
                             </div>
@@ -71,7 +71,7 @@
 		
 		    function toggleFields() {
 		        const userType = typeSelect.value;
-		        if (userType === 'CLIENT') {
+		        if (userType === 'EMPLOYEE') {
 		            branchDiv.style.display = '';
 		        } else {
 		            branchDiv.style.display = 'none';
