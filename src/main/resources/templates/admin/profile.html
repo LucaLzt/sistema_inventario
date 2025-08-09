@@ -8,7 +8,7 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
-<body sec:authorize="hasRole('EMPLOYEE')">
+<body sec:authorize="hasRole('ADMIN')">
 
 	<!-- Navbar fragment -->
     <div th:replace="~{fragments/navbar :: navbar('profile')}"></div>
@@ -27,9 +27,9 @@
 	                            <i class="fa-solid fa-user fa-lg"></i>
 	                        </div>
 	                        <div>
-	                            <h4 class="mb-1" th:text="${employee.fullName}">Full Name</h4>
+	                            <h4 class="mb-1" th:text="${admin.fullName}">Full Name</h4>
 	                            <span class="badge text-bg-secondary"
-	                                  th:text="${employee.role.name}">Role</span>
+	                                  th:text="${admin.role.name}">Role</span>
 	                        </div>
 	                    </div>
 	
@@ -40,7 +40,7 @@
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Name</div>
 	                                <div class="fw-semibold"
-	                                     th:text="${#strings.arraySplit(employee.fullName, ' ')[0]}">
+	                                     th:text="${#strings.arraySplit(admin.fullName, ' ')[0]}">
 	                                </div>
 	                            </div>
 	                        </div>
@@ -50,7 +50,7 @@
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Last Name</div>
 	                                <div class="fw-semibold"
-	                                     th:text="${employee.fullName != null && #strings.arraySplit(employee.fullName, ' ').length > 1 ? #strings.arraySplit(employee.fullName, ' ')[1] : '—'}">
+	                                     th:text="${admin.fullName != null && #strings.arraySplit(admin.fullName, ' ').length > 1 ? #strings.arraySplit(admin.fullName, ' ')[1] : '—'}">
 	                                </div>
 	                            </div>
 	                        </div>
@@ -59,7 +59,7 @@
 	                        <div class="col-md-6">
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Email</div>
-	                                <div class="fw-semibold" th:text="${employee.email}"></div>
+	                                <div class="fw-semibold" th:text="${admin.email}"></div>
 	                            </div>
 	                        </div>
 	
@@ -67,16 +67,16 @@
 	                        <div class="col-md-6">
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Mobile</div>
-	                                <div class="fw-semibold" th:text="${employee.mobile}"></div>
+	                                <div class="fw-semibold" th:text="${admin.mobile}"></div>
 	                            </div>
 	                        </div>
 	
-	                        <!-- Workplace -->
+	                        <!-- Super Admin -->
 	                        <div class="col-md-6">
 	                            <div class="border rounded p-3 h-100">
-	                                <div class="text-muted small">Workplace</div>
+	                                <div class="text-muted small">Has Privileges</div>
 	                                <div class="fw-semibold"
-	                                     th:text="${branch != null ? (branch.name + ' - ' + branch.address) : '—'}">
+	                                     th:text="${admin.isSuperAdmin() ? 'Yes' : 'No'}">
 	                                </div>
 	                            </div>
 	                        </div>
@@ -86,7 +86,7 @@
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Rol</div>
 	                                <div class="fw-semibold"
-	                                     th:text="${#strings.capitalize(employee.role.name()?.toLowerCase())}">
+	                                     th:text="${#strings.capitalize(admin.role.name()?.toLowerCase())}">
 	                                </div>
 	                            </div>
 	                        </div>
@@ -96,7 +96,7 @@
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Registered At</div>
 	                                <div class="fw-semibold"
-	                                     th:text="${#temporals.format(employee.registeredAt, 'dd/MM/yyyy HH:mm:ss')}">
+	                                     th:text="${#temporals.format(admin.registeredAt, 'dd/MM/yyyy HH:mm:ss')}">
 	                                </div>
 	                            </div>
 	                        </div>
@@ -106,7 +106,7 @@
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Updated At</div>
 	                                <div class="fw-semibold"
-	                                     th:text="${#temporals.format(employee.updatedAt, 'dd/MM/yyyy HH:mm:ss')}">
+	                                     th:text="${#temporals.format(admin.updatedAt, 'dd/MM/yyyy HH:mm:ss')}">
 	                                </div>
 	                            </div>
 	                        </div>
@@ -114,10 +114,10 @@
 	
 	                    <!-- Actions -->
 	                    <div class="d-flex flex-wrap gap-2 mt-4">
-	                        <a class="btn btn-outline-primary" th:href="@{/employees/profile/edit}">
+	                        <a class="btn btn-outline-primary" th:href="@{/admins/profile/edit}">
 	                            <i class="fa-solid fa-user-pen me-1"></i> Edit Profile
 	                        </a>
-	                        <a class="btn btn-outline-secondary" th:href="@{/employees/profile/change-password}">
+	                        <a class="btn btn-outline-secondary" th:href="@{/admins/profile/change-password}">
 	                            <i class="fa-solid fa-key me-1"></i> Change Password
 	                        </a>
 	

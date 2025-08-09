@@ -86,7 +86,16 @@ public class AdminServiceImpl implements AdminService {
 		// Delete Admin by ID
 		adminRepository.deleteById(id);
 	}
-	
-	
+
+	@Override
+	public AdminDTO findByEmail(String name) {
+		// Find Admin by email
+		Admin admin = adminRepository.findByEmail(name)
+				.orElseThrow(() -> new RuntimeException("Admin not found with email: " + name));
+		
+		// Convert to AdminDTO and return
+		AdminDTO adminDto = modelMapper.map(admin, AdminDTO.class);
+		return adminDto;
+	}
 	
 }

@@ -16,6 +16,7 @@ import com.pruebas.sistema_inventario.dtos.EmployeeDTO;
 import com.pruebas.sistema_inventario.dtos.PasswordChangeDTO;
 import com.pruebas.sistema_inventario.service.interfaces.BranchService;
 import com.pruebas.sistema_inventario.service.interfaces.EmployeeService;
+import com.pruebas.sistema_inventario.service.interfaces.UserService;
 
 import jakarta.validation.Valid;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class EmployeeController {
 	
 	private final EmployeeService employeeService;
 	private final BranchService branchService;
+	private final UserService userService;
 	
 	@GetMapping("/profile")
 	public String showProfile(Principal principal, Model model) {
@@ -90,7 +92,7 @@ public class EmployeeController {
 			return "redirect:/auth/login?emailChanged=ok";
 		}
 		
-		// Update the employee's profile using the service
+		// Update the employee's profile
 		employeeService.update(employee.getId(), employee);
 		
 		// Redirect to the profile view after editing
@@ -126,7 +128,7 @@ public class EmployeeController {
 		
 		// Search for the employee through the principal's email and change their password
 		EmployeeDTO employee = employeeService.findByEmail(principal.getName());
-		employeeService.changePassword(employee.getId(), passwordChange);
+		userService.changePassword(employee.getId(), passwordChange);
 		
 		// Redirect to the profile view after changing the password
 		return "redirect:/employees/profile?passwordChanged=ok";

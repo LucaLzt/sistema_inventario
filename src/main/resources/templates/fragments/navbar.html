@@ -51,15 +51,15 @@
 		                    <i class="fas fa-user-circle fa-2x"></i>
 		                </a>
 		            </li>
+		            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+		                <a th:href="@{/admins/profile}"
+		                   th:classappend="${activePage} == 'profile' ? 'active' : ''"
+		                   class="nav-link d-flex align-items-center gap-2">
+		                    <span>My Profile</span>
+		                    <i class="fas fa-user-circle fa-2x"></i>
+		                </a>
+		            </li>
 		        </ul>
-            	<div sec:authorize="hasRole('ADMIN')" class="nav-link ms-auto me-2 d-flex align-items-center gap-2">
-	            	<form th:action="@{/logout}" method="post">
-	            		<button class="btn btn-link text-white text-decoration-none" type="submit">
-		            		<span class="navbar-text text-white me-1">Logout</span>
-		            		<i class="fa fa-sign-out fa-lg" aria-hidden="true" style="color: white; "></i>
-	            		</button>
-	            	</form>
-            	</div>
 	        </div>
 	    </div>
 	</nav>

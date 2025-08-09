@@ -9,5 +9,6 @@ public interface AdminService {
 	AdminDTO findById(Long id);
 	AdminDTO update(Long id, AdminDTO adminDto);
 	void deleteById(Long id);
+	AdminDTO findByEmail(String name);
 	
 }
