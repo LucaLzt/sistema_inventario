@@ -13,11 +13,13 @@ import lombok.Setter;
 @NoArgsConstructor @AllArgsConstructor
 public class UserDTO {
 	
+	private Long id;
 	private String email;
 	private String password;
 	private String fullName;
 	private Long mobile;
 	private Role role;
 	private LocalDateTime registeredAt;
+	private LocalDateTime updatedAt;
 	
 }

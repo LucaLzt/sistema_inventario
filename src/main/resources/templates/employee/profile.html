@@ -11,7 +11,7 @@
 <body sec:authorize="hasRole('EMPLOYEE')">
 
 	<!-- Navbar fragment -->
-    <div th:replace="~{fragments/navbar :: navbar('home')}"></div>
+    <div th:replace="~{fragments/navbar :: navbar('profile')}"></div>
     
     <div class="container py-4">
 	    <div class="row justify-content-center">
@@ -91,12 +91,22 @@
 	                            </div>
 	                        </div>
 	
-	                        <!-- Fecha de Registro -->
+	                        <!-- Registered At -->
 	                        <div class="col-md-6">
 	                            <div class="border rounded p-3 h-100">
 	                                <div class="text-muted small">Registered At</div>
 	                                <div class="fw-semibold"
-	                                     th:text="${#temporals.format(employee.registeredAt, 'dd/MM/yyyy HH:mm')}">
+	                                     th:text="${#temporals.format(employee.registeredAt, 'dd/MM/yyyy HH:mm:ss')}">
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <!-- Updated At -->
+	                        <div class="col-md-6">
+	                            <div class="border rounded p-3 h-100">
+	                                <div class="text-muted small">Updated At</div>
+	                                <div class="fw-semibold"
+	                                     th:text="${#temporals.format(employee.updatedAt, 'dd/MM/yyyy HH:mm:ss')}">
 	                                </div>
 	                            </div>
 	                        </div>
@@ -107,7 +117,7 @@
 	                        <a class="btn btn-outline-primary" th:href="@{/employees/profile/edit}">
 	                            <i class="fa-solid fa-user-pen me-1"></i> Edit Profile
 	                        </a>
-	                        <a class="btn btn-outline-secondary" th:href="@{/employees/profile/password}">
+	                        <a class="btn btn-outline-secondary" th:href="@{/employees/profile/change-password}">
 	                            <i class="fa-solid fa-key me-1"></i> Change Password
 	                        </a>
 	

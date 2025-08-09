@@ -42,12 +42,16 @@
 	                    </a>
 	                </li>
 	            </ul>
-	            <div sec:authorize="hasRole('EMPLOYEE')" class="nav-link ms-auto me-2">
-	            	<a th:href="@{/employees/profile}" class="text-white text-decoration-none d-flex align-items-center gap-2">
-	            		<span class="navbar-text text-white">My Profile</span>
-	            		<i class="fas fa-user-circle fa-2x" style="color: white; "></i>
-	            	</a>
-            	</div>
+	            <ul class="navbar-nav ms-auto align-items-center">
+		            <li class="nav-item" sec:authorize="hasRole('EMPLOYEE')">
+		                <a th:href="@{/employees/profile}"
+		                   th:classappend="${activePage} == 'profile' ? 'active' : ''"
+		                   class="nav-link d-flex align-items-center gap-2">
+		                    <span>My Profile</span>
+		                    <i class="fas fa-user-circle fa-2x"></i>
+		                </a>
+		            </li>
+		        </ul>
             	<div sec:authorize="hasRole('ADMIN')" class="nav-link ms-auto me-2 d-flex align-items-center gap-2">
 	            	<form th:action="@{/logout}" method="post">
 	            		<button class="btn btn-link text-white text-decoration-none" type="submit">

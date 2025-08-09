@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -60,6 +61,10 @@ public abstract class User implements UserDetails {
 	@Column(name= "registered_at", nullable = false)
 	@CreationTimestamp
 	private LocalDateTime registeredAt;
+	
+	@Column(name= "updated_at", nullable = false)
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 	
 	@Column(name = "active_user", nullable = false)
 	private boolean active;
