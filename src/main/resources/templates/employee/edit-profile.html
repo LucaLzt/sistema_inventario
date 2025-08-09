@@ -35,6 +35,13 @@
 
                     <!-- Edit Profile Form -->
                     <form th:object="${employee}" th:action="@{/employees/profile/edit}" method="post" autocomplete="off">
+                        
+	                    <!-- General Alert for Errors -->
+						<div th:if="${#fields?.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">
+							<strong>Please correct the following errors:</strong>
+							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+						</div>
+                        
                         <div class="row g-3">
                         	
                         	<!-- Hidden Input for Id -->
@@ -47,8 +54,15 @@
                                     	Full Name
                                     	<span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control fw-semibold" id="fullName"
-                                           th:field="*{fullName}">
+                                    <input type="text" 
+                                    	   class="form-control fw-semibold"
+                                    	   id="fullName"
+                                           th:field="*{fullName}"
+                                           th:classappend="${#fields?.hasErrors('fullName')} ? 'is-invalid' : ''">
+                                     <!-- Specific Error for Full Name -->
+                                     <div th:if="${#fields?.hasErrors('fullName')}" class="invalid-feedback">
+										<div th:each="error : ${#fields.errors('fullName')}" th:text="${error}"></div>
+									 </div>
                                 </div>
                             </div>
                             
@@ -62,8 +76,15 @@
 								            You will need to log in again if you change your email.
 								        </small>
                                     </label>
-                                    <input type="email" class="form-control fw-semibold" id="email"
-                                           th:field="*{email}">
+                                    <input type="text" 
+                                    	   class="form-control fw-semibold"
+                                    	   id="email"
+                                           th:field="*{email}"
+                                           th:classappend="${#fields?.hasErrors('email')} ? 'is-invalid' : ''">
+                                    <!-- Specific Error for Email -->
+                                    <div th:if="${#fields?.hasErrors('email')}" class="invalid-feedback">
+                                    	<div th:each="error : ${#fields.errors('email')}" th:text="${error}"></div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -74,8 +95,15 @@
                                    		Mobile
                                     	<span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control fw-semibold" id="mobile"
-                                           th:field="*{mobile}">
+                                    <input type="text" 
+                                    	   class="form-control fw-semibold"
+                                    	   id="mobile"
+                                           th:field="*{mobile}"
+                                           th:classappend="${#fields?.hasErrors('mobile')} ? 'is-invalid' : ''"> 
+                                    <!-- Specific Error for Mobile -->
+                                    <div th:if="${#fields?.hasErrors('mobile')}" class="invalid-feedback">
+                                    	<div th:each="error : ${#fields.errors('mobile')}" th:text="${error}"></div>
+                                    </div>
                                 </div>
                             </div>
                             
