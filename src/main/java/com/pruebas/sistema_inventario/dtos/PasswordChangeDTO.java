@@ -14,7 +14,7 @@ public class PasswordChangeDTO {
 	
 	@NotBlank(message = "Email is required.")
 	@Email(message = "Email must be valid.", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-	@Size(min = 10, max = 100, message = "Email must be between 10 and 100 characters.")
+	@Size(min = 10, max = 50, message = "Email must be between 10 and 50 characters.")
 	private String email;
 	
 	@NotBlank(message = "Current password is required.")

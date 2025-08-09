@@ -14,6 +14,14 @@
                     <div class="card-body">
                         <h2 class="card-title text-center mb-4">User Registration</h2>
                         <form th:action="@{/auth/register}" th:object="${registerDto}" method="post" autocomplete="off">
+                            
+                            <!-- General Alert for Errors -->
+							<div th:if="${#fields?.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show" role="alert">
+								<strong>Please correct the following errors:</strong>
+								<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+							</div>
+                            
+                            <!-- User Type -->
                             <div class="mb-3">
                                 <label for="type" class="form-label">User Type</label>
                                 <select id="type" class="form-select" th:field="*{type}">
@@ -22,25 +30,65 @@
                                     <option value="ADMIN">Administrator</option>
                                 </select>
                             </div>
+                            
+                            <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" class="form-control" th:field="*{email}" placeholder="example@email.com">
-                                <div class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                <input type="text" 
+                                	   id="email" 
+                                	   class="form-control" 
+                                	   th:field="*{email}" 
+                                	   placeholder="example@email.com"
+                                	   th:classappend="${#fields?.hasErrors('email')} ? 'is-invalid' : ''">
+                               	<!-- Specific Error for Email -->
+                                <div th:if="${#fields?.hasErrors('email')}" class="invalid-feedback">
+									<div th:each="error : ${#fields.errors('email')}" th:text="${error}"></div>
+							 	</div>
                             </div>
+                            
+                            <!-- Password -->
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" class="form-control" th:field="*{password}" placeholder="Password">
-                                <div class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                <input type="password" 
+                                	   id="password" 
+                                	   class="form-control" 
+                                	   th:field="*{password}" 
+                                	   placeholder="Password"
+                                	   th:classappend="${#fields?.hasErrors('password')} ? 'is-invalid' : ''">
+                                <!-- Specific Error for Email -->
+                                <div th:if="${#fields?.hasErrors('password')}" class="invalid-feedback">
+									<div th:each="error : ${#fields.errors('password')}" th:text="${error}"></div>
+							 	</div>
                             </div>
+                            
+                            <!-- Full Name -->
                             <div class="mb-3">
                                 <label for="fullName" class="form-label">Full Name</label>
-                                <input type="text" id="fullName" class="form-control" th:field="*{fullName}" placeholder="Your full name">
-                                <div class="text-danger small" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                                <input type="text" 
+                                	   id="fullName" 
+                                	   class="form-control" 
+                                	   th:field="*{fullName}" 
+                                	   placeholder="Your full name"
+                                	   th:classappend="${#fields?.hasErrors('fullName')} ? 'is-invalid' : ''">
+                                <!-- Specific Error for Email -->
+                                <div th:if="${#fields?.hasErrors('fullName')}" class="invalid-feedback">
+									<div th:each="error : ${#fields.errors('fullName')}" th:text="${error}"></div>
+							 	</div>
                             </div>
+                            
+                            <!-- Mobile -->
                             <div class="mb-3">
                                 <label for="mobile" class="form-label">Mobile</label>
-                                <input type="text" id="mobile" class="form-control" th:field="*{mobile}" placeholder="Mobile number">
-                                <div class="text-danger small" th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}"></div>
+                                <input type="text" 
+                                	   id="mobile" 
+                                	   class="form-control" 
+                                	   th:field="*{mobile}" 
+                                	   placeholder="Mobile number"
+                                	   th:classappend="${#fields?.hasErrors('mobile')} ? 'is-invalid' : ''">
+                                <!-- Specific Error for Email -->
+                                <div th:if="${#fields?.hasErrors('mobile')}" class="invalid-feedback">
+									<div th:each="error : ${#fields.errors('mobile')}" th:text="${error}"></div>
+							 	</div>
                             </div>
                             <!-- Branch for CLIENT only -->
                             <div class="mb-3" id="branchDiv" style="display:none;">

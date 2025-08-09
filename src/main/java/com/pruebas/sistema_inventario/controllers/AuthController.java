@@ -2,6 +2,7 @@ package com.pruebas.sistema_inventario.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import com.pruebas.sistema_inventario.service.interfaces.AdminService;
 import com.pruebas.sistema_inventario.service.interfaces.BranchService;
 import com.pruebas.sistema_inventario.service.interfaces.EmployeeService;
 
+import jakarta.validation.Valid;
 import lombok.Builder;
 
 @Controller @Builder
@@ -35,11 +37,21 @@ public class AuthController {
 	}
 	
 	@PostMapping("/register")
-    public String registerUser(@ModelAttribute("registerDto") RegisterDTO dto, Model model) {
-        if ("EMPLOYEE".equalsIgnoreCase(dto.getType())) {
-        	employeeService.save(dto);
-        } else if ("ADMIN".equalsIgnoreCase(dto.getType())) {
-        	adminService.save(dto);
+    public String registerUser(@Valid @ModelAttribute("registerDto") RegisterDTO registerDto, 
+    		BindingResult result, 
+    		Model model) {
+		
+		// // Validate the user's data
+		if (result.hasErrors()) {
+			model.addAttribute("registerDto", registerDto);
+			model.addAttribute("branches", branchService.findAll());
+			return "auth/register";
+		}
+		
+        if ("EMPLOYEE".equalsIgnoreCase(registerDto.getType())) {
+        	employeeService.save(registerDto);
+        } else if ("ADMIN".equalsIgnoreCase(registerDto.getType())) {
+        	adminService.save(registerDto);
         } else {
             model.addAttribute("error", "Invalid user type");
             model.addAttribute("branches", branchService.findAll());

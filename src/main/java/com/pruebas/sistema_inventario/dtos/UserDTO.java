@@ -21,15 +21,15 @@ public class UserDTO {
 	
 	private Long id;
 	
-	@Email(message = "Email must be valid.", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
 	@NotBlank(message = "Email is required.")
-	@Size(min = 10, max = 100, message = "Email must be between 10 and 100 characters.")
+	@Email(message = "Email must be valid.", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+	@Size(min = 10, max = 50, message = "Email must be between 10 and 50 characters.")
 	private String email;
 	
 	private String password;
 	
 	@NotBlank(message = "Full name is required.")
-	@Size(min = 5, max = 100, message = "Full name must be less than 100 characters.")
+	@Size(min = 5, max = 50, message = "Full name must be less than 50 characters.")
 	private String fullName;
 	
 	@NotNull(message = "Mobile number is required.")
