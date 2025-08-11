@@ -1,18 +1,25 @@
 package com.pruebas.sistema_inventario.controllers;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.pruebas.sistema_inventario.dtos.AdminDTO;
 import com.pruebas.sistema_inventario.dtos.PasswordChangeDTO;
+import com.pruebas.sistema_inventario.dtos.UserDTO;
+import com.pruebas.sistema_inventario.entities.Role;
 import com.pruebas.sistema_inventario.service.interfaces.AdminService;
 import com.pruebas.sistema_inventario.service.interfaces.UserService;
 
@@ -22,7 +29,8 @@ import lombok.Builder;
 @Controller @Builder
 @RequestMapping("/admins")
 public class AdminController {
-	
+
+	private static final int PAGE_SIZE = 11; // Default page size for pagination
 	private final AdminService adminService;
 	private final UserService userService;
 	
@@ -112,6 +120,56 @@ public class AdminController {
 		
 		// Redirect to the profile view after changing the password
 		return "redirect:/admins/profile?passwordChanged=ok";
+	}
+	
+	@GetMapping("/requests")
+	public String showRequests(
+			@RequestParam(required = false) Role roleName,
+			@RequestParam(required = false) String search, 
+			@RequestParam(defaultValue = "0") int page,
+			Model model) {
+		// Search for the users who have requested to be approved
+		Page<UserDTO> requests = userService.findByFilters(roleName, search, page, PAGE_SIZE);
+		model.addAttribute("requests", requests);
+		
+		// Contruct a lists of PAGE_SIZE elements
+		List<UserDTO> requestsFixed = new ArrayList<>(requests.getContent());
+		while (requestsFixed.size() < 11) {
+		    requestsFixed.add(null);
+		}
+		model.addAttribute("requestsFixed", requestsFixed);
+		
+		// Add the search term and pagination attributes to the model
+		model.addAttribute("roleName", roleName);
+		model.addAttribute("search", search);
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", requests.getTotalPages());
+		model.addAttribute("hasNext", requests.hasNext());
+		model.addAttribute("hasPrevious", requests.hasPrevious());
+		
+		// Add the roles to the model
+		model.addAttribute("roles", Role.values());
+		
+		// Return the requests view
+		return "admin/requests";
+	}
+	
+	@PostMapping("/requests/approve/{id}")
+	public String approveRequest(@PathVariable Long id) {
+		// Approve the user request by their ID
+		userService.approveRequest(id);
+		
+		// Redirect to the requests view after approving
+		return "redirect:/admins/requests?approved=ok";
+	}
+	
+	@PostMapping("/requests/reject/{id}")
+	public String rejectRequest(@PathVariable Long id) {
+		// Reject the user request by their ID
+		userService.rejectRequest(id);
+		
+		// Redirect to the requests view after rejecting
+		return "redirect:/admins/requests?rejected=ok";
 	}
 
 }

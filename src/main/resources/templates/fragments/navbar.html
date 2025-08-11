@@ -41,6 +41,12 @@
 	                       class="nav-link">Branches
 	                    </a>
 	                </li>
+	                <li class="nav-item" sec:authorize="hasRole('ADMIN') and principal.isSuperAdmin()">
+	                    <a th:href="@{/admins/requests}" 
+	                       th:classappend="${activePage} == 'requests' ? 'active' : ''"
+	                       class="nav-link">Requests
+	                    </a>
+	                </li>
 	            </ul>
 	            <ul class="navbar-nav ms-auto align-items-center">
 		            <li class="nav-item" sec:authorize="hasRole('EMPLOYEE')">

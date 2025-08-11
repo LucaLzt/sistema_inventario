@@ -99,7 +99,7 @@ public abstract class User implements UserDetails {
 	
 	@Override
 	public boolean isEnabled() {
-		return true; // true if the user is active and approved or false otherwise
+		return this.approved; // true if the user is active and approved or false otherwise
 	}
 	
 }
