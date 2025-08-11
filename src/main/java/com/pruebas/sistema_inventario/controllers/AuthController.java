@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.pruebas.sistema_inventario.dtos.RegisterDTO;
 import com.pruebas.sistema_inventario.service.interfaces.AdminService;
@@ -25,7 +26,18 @@ public class AuthController {
 	private final BranchService branchService;
 	
 	@GetMapping("/login")
-	public String showLoginForm() {
+	public String showLoginForm(@RequestParam(value = "error", required = false) String error, 
+			@RequestParam(value = "logout", required = false) String logout,
+			Model model) {
+		
+		// Verify if there is an error or logout message
+		if (error != null) {
+			model.addAttribute("error", error);
+		}
+		if (logout != null) {
+			model.addAttribute("logout", logout);
+		}
+		
 		return "auth/login";
 	}
 	
