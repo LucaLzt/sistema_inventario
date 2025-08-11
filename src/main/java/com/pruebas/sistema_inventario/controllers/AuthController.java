@@ -60,4 +60,12 @@ public class AuthController {
         return "redirect:/auth/login";
     }
 	
+	@GetMapping("/auth/forgot-password")
+	public String showForgotPasswordForm() {
+		
+		// This method is used to display the forgot password form (Build)
+		
+		return "auth/forgot-password";
+	}
+	
 }
