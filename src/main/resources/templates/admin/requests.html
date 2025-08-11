@@ -100,7 +100,8 @@
                 </div>
                 
                 <!-- Pagination -->
-	            <nav aria-label="Users pagination" class="mt-3">
+	            <nav aria-label="Users pagination" class="mt-3"
+		            	th:if="${totalPages > 1 && requests.size() > 0}">
 	            	<ul class="pagination justify-content-center">
 	            		<!-- Previous Button -->
 	            		<li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item" >

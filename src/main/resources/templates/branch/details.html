@@ -15,12 +15,21 @@
 	<div class="main-container">
 		
 		<!-- Title -->
-		<div class="d-flex align-items-center m-3">
-		    <h3 class="mb-0">Branches - Details</h3>
-		    <span class="mx-3 text-muted">|</span>
-		    <h5 class="mb-0 text-muted">
-		        Details for <span th:text="${branch.name}">Name</span> - <span th:text="${branch.address}">Address</span>
-		    </h5>
+		<div class="d-flex align-items-start m-3">
+		    <div class="d-flex flex-column">
+		        <div class="d-flex align-items-center">
+		            <h3 class="mb-0">Branches - Details</h3>
+		            <span class="mx-3 text-muted fs-4">|</span>
+		            <h5 class="mb-0 text-muted">
+		                Details for <span th:text="${branch.name}">Name</span> - <span th:text="${branch.address}">Address</span>
+		            </h5>
+		        </div>
+		    </div>
+		    <div class="ms-auto">
+		        <a th:href="@{/branches/home}" class="btn btn-outline-secondary">
+		            <i class="fa fa-arrow-left me-1"></i> Back
+		        </a>
+		    </div>
 		</div>
 		
 		<!-- Information Container -->
@@ -135,7 +144,8 @@
 					</div>
 					<!-- Pagination -->
 					<nav aria-label="Products pagination">
-					    <ul class="pagination justify-content-center mb-0">
+					    <ul class="pagination justify-content-center mb-0"
+		            		th:if="${totalPages > 1 && productEarnings.size() > 0}">
 					        <!-- Previous Button -->
 					        <li class="page-item" th:classappend="${currentPagePr == 0} ? 'disabled'">
 					            <a th:href="@{/branches/{id}/details(
@@ -288,7 +298,8 @@
 					</div>
 					<!-- Pagination -->
 					<nav aria-label="Movements pagination">
-					    <ul class="pagination justify-content-center mb-0">
+					    <ul class="pagination justify-content-center mb-0"
+		            		th:if="${totalPages > 1 && movements.size() > 0}">
 					        <!-- Previous Button -->
 					        <li class="page-item" th:classappend="${currentPageMv == 0} ? 'disabled'">
 					            <a th:href="@{/branches/{id}/details(
