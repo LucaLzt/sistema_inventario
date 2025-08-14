@@ -18,6 +18,10 @@ public interface UserService {
 
 	void rejectRequest(Long id);
 
-	Page<UserDTO> findByFilters(Role role, String search, int page, int size);
+	Page<UserDTO> findByFilters(Boolean approved, Role role, String search, int page, int size);
+	
+	boolean deleteById(Long id, boolean isActive);
+
+	UserDTO findById(Long id);
 	
 }

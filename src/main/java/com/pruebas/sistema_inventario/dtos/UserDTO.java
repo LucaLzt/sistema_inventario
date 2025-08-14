@@ -40,5 +40,6 @@ public class UserDTO {
 	private Role role;
 	private LocalDateTime registeredAt;
 	private LocalDateTime updatedAt;
+	private boolean isActive;
 	
 }

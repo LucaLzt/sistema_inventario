@@ -97,5 +97,31 @@ public class AdminServiceImpl implements AdminService {
 		AdminDTO adminDto = modelMapper.map(admin, AdminDTO.class);
 		return adminDto;
 	}
+
+	@Override
+	public void updateSuperAdminStatus(Long id, Boolean superAdmin) {
+		// Find Admin by ID
+		Admin admin = adminRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
+		
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		System.out.println(superAdmin);
+		
+		
+		// Update superAdmin status
+		admin.setSuperAdmin(superAdmin);
+		
+		// Save updated Admin entity
+		adminRepository.save(admin);
+	}
 	
 }

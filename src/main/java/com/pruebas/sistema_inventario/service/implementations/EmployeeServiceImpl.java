@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.EmployeeDTO;
 import com.pruebas.sistema_inventario.dtos.RegisterDTO;
+import com.pruebas.sistema_inventario.entities.Branch;
 import com.pruebas.sistema_inventario.entities.Employee;
 import com.pruebas.sistema_inventario.entities.Role;
+import com.pruebas.sistema_inventario.repository.BranchRepository;
 import com.pruebas.sistema_inventario.repository.EmployeeRepository;
 import com.pruebas.sistema_inventario.service.interfaces.EmployeeService;
 
@@ -17,6 +19,7 @@ import lombok.Builder;
 public class EmployeeServiceImpl implements EmployeeService {
 	
 	private final EmployeeRepository employeeRepository;
+	private final BranchRepository branchRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final ModelMapper modelMapper;
 	
@@ -97,5 +100,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 		EmployeeDTO employeeDto = modelMapper.map(employee, EmployeeDTO.class);
 		return employeeDto;
 	}
+	
+	@Override
+	public void updateBranch(Long id, Long branchId) {
+		// Find Employee by ID
+		Employee employee = employeeRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+		
+		// Find Branch by ID
+		Branch branch = branchRepository.findById(branchId)
+				.orElseThrow(() -> new RuntimeException("Branch not found with id: " + branchId));
+		
+		// Update Employee's branch ID
+		employee.setBranch(branch);
+		
+		// Save the updated Employee
+		employeeRepository.save(employee);
+	};
 	
 }

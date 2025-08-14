@@ -10,14 +10,17 @@ import jakarta.persistence.criteria.Predicate;
 public class UserSpecification {
 	
 	public static Specification<User> filter(
+			Boolean approved,
 			Role role,
 			String search
 	) {
 		return (root, query, cb) -> {
 			Predicate predicate = cb.conjunction();
 			
-			// Only users who are not approved
-			predicate = cb.and(predicate, cb.isFalse(root.get("approved")));
+			// Filter by approval status
+			if (approved != null) {
+				predicate = cb.and(predicate, cb.equal(root.get("approved"), approved));
+			}
 			
 			// Filter by role
 			if (role != null) {

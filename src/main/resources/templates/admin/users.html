@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Users Administration</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body sec:authorize="hasRole('ADMIN')">
+	<!-- Navbar -->
+	<div th:replace="~{fragments/navbar :: navbar('users')}"></div>
+	
+	<!-- Toasts -->
+	<!-- Check if 'deleted' parameter exists -->
+	<div th:if="${param.deleted}"
+	     aria-live="polite" aria-atomic="true" 
+	     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1055; min-width: 300px;">
+		<div th:class="'toast show align-items-center border-0 ' + (${param.deleted[0].equals('ok')} ? 'text-bg-success' : 'text-bg-danger')" 
+			 role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+				<div class="toast-body">
+				<span th:text="${param.deleted[0].equals('ok')} ? 'User successfully deleted.' : 'An active user cannot be deleted.'"></span>
+			</div>
+			<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Check if 'update' parameter exists -->
+	<div th:if="${param.update}" 
+	     aria-live="polite" aria-atomic="true" 
+	     style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1055; min-width: 300px;">
+		<div th:class="'toast show align-items-center border-0 ' + (${param.update[0].equals('ok')} ? 'text-bg-success' : 'text-bg-danger')" 
+			 role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="d-flex">
+				<div class="toast-body">
+				<span th:text="${param.update[0].equals('ok')} ? 'User updated successfully.' : 'The user could not be updated.'"></span>
+			</div>
+			<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Title -->
+    <div class="functions-section">
+        <h3 class="m-3">User Administration</h3>
+    </div>
+	
+    <!-- Users Administration List -->
+    <div class="container-fluid mt-3">
+    
+    	<!-- Filters -->
+    	<div class="filter-section ms-2 d-flex justify-content-start align-items-center mb-3">
+    		<form th:action="@{/admins/users}" method="get" class="row align-items-end">
+	            <!-- Roles -->
+	            <div class="col-auto">
+	                <label for="roleFilter" class="form-label mb-0">Filter by Role:</label>
+	                <select name="roleName" class="form-select" style="width: 200px;">
+	                    <option value="" th:selected="${roleName == null}">All Roles</option>
+	                    <option th:each="role : ${roles}"
+	                    		th:value="${role}"
+	                    		th:text="${role}"
+	                    		th:selected="${roleName == role}"></option>
+	                </select>
+	            </div>
+	            <!-- Search -->
+	            <div class="col-auto">
+	                <label for="searchInput" class="form-label mb-0">Search:</label>
+	                <input type="text" name="search" class="form-control" placeholder="Search by name or email" 
+	                	   style="width: 300px;" autocomplete="off" th:value="${search}">
+	            </div>
+	            <!-- Buttons -->
+		        <div class="col-auto d-flex">
+		            <button type="submit" class="btn btn-outline-dark me-2">Filter</button>
+		            <a th:href="@{/admins/users}" class="btn btn-outline-secondary me-2">Reset</a>
+		        </div>
+            </form>
+    	</div>
+    
+        <!-- Table -->
+        <div class="card mb-3">
+            <div class="card-header text-center">
+                <h5>List of Users</h5>
+            </div>
+            
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover text-center">
+                        <thead>
+                            <tr>
+                            	<th>ID</th>
+                                <th>Email</th>
+                                <th>Full Name</th>
+                                <th>Mobile</th>
+                                <th>Role</th>
+                                <th>Registered At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr th:each="user : ${usersFixed}">
+							    <td th:text="${user != null ? user.id : '—'}"></td>
+							    <td th:text="${user != null ? user.email : '—'}"></td>
+							    <td th:text="${user != null ? user.fullName : '—'}"></td>
+							    <td th:text="${user != null ? user.mobile : '—'}"></td>
+							    <td th:text="${user != null ? user.role : '—'}"></td>
+							    <td th:text="${user != null ? #temporals.format(user.registeredAt, 'yyyy-MM-dd HH:mm') : '—'}"></td>
+							    <td>
+							        <div th:if="${user != null}">
+						        		<!-- View Button -->
+							            <button  type="button"
+							            		 class="btn btn-sm btn-outline-dark me-1"
+							            		 data-bs-toggle="modal"
+							            		 data-bs-target="#modalViewUser"
+							            		 th:attr="data-id=${user.id},
+											              data-email=${user.email},
+											              data-fullname=${user.fullName},
+											              data-mobile=${user.mobile},
+											              data-role=${user.role},
+											              data-registeredat=${#temporals.format(user.registeredAt, 'yyyy-MM-dd HH:mm')},
+											              data-updatedat=${#temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm')},
+											              data-active=${user.active},
+											              data-branchid=${user.role.name() == 'EMPLOYEE' ? user.branchId : null},
+											              data-superadmin=${user.role.name() == 'ADMIN' ? user.superAdmin : null}">
+							            	 View
+							            </button>
+							        </div>
+							        <div th:if="${user == null}">
+							        	<!-- View Button - Disabled -->
+							        	<button class="btn btn-sm btn-outline-dark me-1" disabled>View</button>
+							        </div>
+							    </td>
+							</tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+	            <nav aria-label="Users pagination" class="mt-3"
+		            	th:if="${totalPages > 1 && users.size() > 0}">
+	            	<ul class="pagination justify-content-center">
+	            		<!-- Previous Button -->
+	            		<li th:classappend="${currentPage == 0} ? 'disabled'" class="page-item" >
+	            			<a th:href="@{/admins/users(
+	            						page=${currentPage-1},
+	            						search=${search},
+	            						roleName=${roleName}
+                       			        )}"	 
+	            				class="page-link" 
+	            				tabindex="-1">Previous</a>
+	            		</li>
+	            		<!-- Number of Page -->
+	            		<li class="page-item"
+	            			th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+	            			th:classappend="${i == currentPage} ? 'active'">
+	            			<a class="page-link" 
+	            			   th:href="@{/admins/users(
+	            						page=${i},
+	            						search=${search},
+	            						roleName=${roleName}
+                       			        )}"	
+	            			   th:text="${i + 1}">1</a>
+	            		</li>
+	            		<!-- Next Button -->
+	            		<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+	            			<a class="page-link" th:href="@{/admins/users(
+	            						page=${currentPage + 1},
+	            						search=${search},
+	            						roleName=${roleName}
+	            						)}">Next</a>
+	            		</li>
+	            	</ul>
+	            </nav>
+            </div>
+        </div>
+    </div>
+    
+	<!-- Modals -->
+	<div th:replace="~{fragments/users-modals :: modalViewUser}"></div>
+	
+	<!-- Scripts -->
+	<script src="/js/modalViewUser.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

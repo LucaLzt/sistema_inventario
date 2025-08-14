@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pruebas.sistema_inventario.dtos.AdminDTO;
+import com.pruebas.sistema_inventario.dtos.EmployeeDTO;
 import com.pruebas.sistema_inventario.dtos.PasswordChangeDTO;
 import com.pruebas.sistema_inventario.dtos.UserDTO;
 import com.pruebas.sistema_inventario.entities.Admin;
@@ -113,11 +115,49 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	}
 	
 	@Override
-	public Page<UserDTO> findByFilters(Role role, String search, int page, int size) {
+	public Page<UserDTO> findByFilters(Boolean approved, Role role, String search, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "registeredAt"));
-		var spec = UserSpecification.filter(role, search);
+		var spec = UserSpecification.filter(approved, role, search);
 		Page<User> users = userRepository.findAll(spec, pageable);
-		return users.map(user -> modelMapper.map(user, UserDTO.class));
+		
+		// Polymorphism mapping
+		return users.map(user -> {
+			if (user instanceof Employee) {
+				return modelMapper.map(user, EmployeeDTO.class);
+			} else if (user instanceof Admin) {
+				return modelMapper.map(user, AdminDTO.class);
+			} else {
+				return modelMapper.map(user, UserDTO.class);
+			}
+		});
+	}
+	
+	@Override
+	public boolean deleteById(Long id, boolean isActive) {
+		if(isActive) {
+			// If the user is active, return false
+			return false;
+		} else {
+			// If the user is not active, delete by ID
+			userRepository.deleteById(id);
+			return true;
+		}
+	}
+
+	@Override
+	public UserDTO findById(Long id) {
+		// Find User by ID
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+		
+		// Polymorphism mapping
+		if (user instanceof Employee) {
+			return modelMapper.map(user, EmployeeDTO.class);
+		} else if (user instanceof Admin) {
+			return modelMapper.map(user, AdminDTO.class);
+		} else {
+			return modelMapper.map(user, UserDTO.class);
+		}
 	}
 
 }

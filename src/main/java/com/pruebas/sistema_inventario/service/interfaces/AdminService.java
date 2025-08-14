@@ -10,5 +10,6 @@ public interface AdminService {
 	AdminDTO update(Long id, AdminDTO adminDto);
 	void deleteById(Long id);
 	AdminDTO findByEmail(String name);
+	void updateSuperAdminStatus(Long id, Boolean superAdmin);
 	
 }

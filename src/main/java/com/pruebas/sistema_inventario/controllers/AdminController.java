@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.pruebas.sistema_inventario.dtos.AdminDTO;
+import com.pruebas.sistema_inventario.dtos.EmployeeDTO;
 import com.pruebas.sistema_inventario.dtos.PasswordChangeDTO;
 import com.pruebas.sistema_inventario.dtos.UserDTO;
 import com.pruebas.sistema_inventario.entities.Role;
 import com.pruebas.sistema_inventario.service.interfaces.AdminService;
+import com.pruebas.sistema_inventario.service.interfaces.BranchService;
+import com.pruebas.sistema_inventario.service.interfaces.EmployeeService;
 import com.pruebas.sistema_inventario.service.interfaces.UserService;
 
 import jakarta.validation.Valid;
@@ -29,8 +32,10 @@ import lombok.Builder;
 @Controller @Builder
 @RequestMapping("/admins")
 public class AdminController {
-
+	
 	private static final int PAGE_SIZE = 11; // Default page size for pagination
+	private final EmployeeService employeeService;
+	private final BranchService branchService;
 	private final AdminService adminService;
 	private final UserService userService;
 	
@@ -122,6 +127,86 @@ public class AdminController {
 		return "redirect:/admins/profile?passwordChanged=ok";
 	}
 	
+	@GetMapping("/users")
+	public String showUsers(
+			@RequestParam(required = false) Role roleName,
+			@RequestParam(required = false) String search, 
+			@RequestParam(defaultValue = "0") int page,
+			Model model) {
+		// Search for the users and add them to the model
+		Page<UserDTO> users = userService.findByFilters(null, roleName, search, page, PAGE_SIZE);
+		model.addAttribute("users", users);
+		
+		// Contruct a lists of PAGE_SIZE elements
+		List<UserDTO> usersFixed = new ArrayList<>(users.getContent());
+		while (usersFixed.size() < 11) {
+		    usersFixed.add(null);
+		}
+		model.addAttribute("usersFixed", usersFixed);
+		
+		// Add the search term and pagination attributes to the model
+		model.addAttribute("roleName", roleName);
+		model.addAttribute("search", search);
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", users.getTotalPages());
+		model.addAttribute("hasNext", users.hasNext());
+		model.addAttribute("hasPrevious", users.hasPrevious());
+		
+		// Add the roles and branches to the model
+		model.addAttribute("roles", Role.values());
+		model.addAttribute("branches", branchService.findAll());
+		
+		// Add the principal
+		model.addAttribute("principal", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+		
+		// Return the users view
+		return "admin/users";
+	}
+	
+	@PostMapping("/users/view/update-or-delete")
+	public String updateOrDeleteUser(
+	        @RequestParam Long id,
+	        @RequestParam(required = false) String action,
+	        @RequestParam(required = false) Boolean isActive,
+	        @RequestParam(required = false) Long branchId,
+	        @RequestParam(required = false, defaultValue = "false") Boolean superAdmin) {
+
+	    if ("update".equals(action)) {
+	        updateUser(id, branchId, superAdmin);
+	        return "redirect:/admins/users?update=ok";
+	    } else if ("delete".equals(action)) {
+	        deleteUser(id, isActive);
+	        return "redirect:/admins/users?delete=ok";
+	    }
+	    return "redirect:/admins/users?error=invalidAction";
+	}
+	
+	private String updateUser(Long id, Long branchId, Boolean superAdmin) {
+		// Find the user by ID
+		UserDTO user = userService.findById(id);
+		
+		// Check if the user is an instance of AdminDTO or EmployeeDTO and update accordingly
+		if (user instanceof AdminDTO) {
+			adminService.updateSuperAdminStatus(id, superAdmin);
+			return "redirect:/admins/users?update=ok";
+		} else if (user instanceof EmployeeDTO) {
+			employeeService.updateBranch(id, branchId);
+			return "redirect:/admins/users?update=ok";
+		}
+		
+		return "redirect:/admins/users?update=error";
+	}
+	
+	private String deleteUser(Long id, boolean isActive) {
+		if (userService.deleteById(id, isActive)) {
+			// If the user was successfully deleted, return a success message
+			return "redirect:/admins/users?deleted=ok";
+		} else {
+			// If the user was not deleted, return an error message
+			return "redirect:/admins/users?deleted=error";
+		}
+	}
+	
 	@GetMapping("/requests")
 	public String showRequests(
 			@RequestParam(required = false) Role roleName,
@@ -129,7 +214,7 @@ public class AdminController {
 			@RequestParam(defaultValue = "0") int page,
 			Model model) {
 		// Search for the users who have requested to be approved
-		Page<UserDTO> requests = userService.findByFilters(roleName, search, page, PAGE_SIZE);
+		Page<UserDTO> requests = userService.findByFilters(false, roleName, search, page, PAGE_SIZE);
 		model.addAttribute("requests", requests);
 		
 		// Contruct a lists of PAGE_SIZE elements
