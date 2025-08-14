@@ -8,6 +8,8 @@ import com.pruebas.sistema_inventario.dtos.AdminDTO;
 import com.pruebas.sistema_inventario.dtos.RegisterDTO;
 import com.pruebas.sistema_inventario.entities.Admin;
 import com.pruebas.sistema_inventario.entities.Role;
+import com.pruebas.sistema_inventario.exceptions.ActiveUserException;
+import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.AdminRepository;
 import com.pruebas.sistema_inventario.service.interfaces.AdminService;
 
@@ -46,7 +48,7 @@ public class AdminServiceImpl implements AdminService {
 	public AdminDTO findById(Long id) {
 		// Find Admin by ID
 		Admin admin = adminRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
 	
 		// Convert to AdminDTO and return
 		AdminDTO adminDto = modelMapper.map(admin, AdminDTO.class);
@@ -57,7 +59,7 @@ public class AdminServiceImpl implements AdminService {
 	public AdminDTO update(Long id, AdminDTO adminDto) {
 		// Find Admin by ID
 		Admin admin = adminRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
 		
 		// Update Admin fields
 		admin.setEmail(adminDto.getEmail());
@@ -76,11 +78,11 @@ public class AdminServiceImpl implements AdminService {
 	public void deleteById(Long id) {
 		// Check if Admin exists
 		Admin admin = adminRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
 		
 		// Check if Admin is not active
 		if (admin.isActive()) {
-			throw new RuntimeException("Cannot delete active admin with id: " + id);
+			throw new ActiveUserException("Cannot delete active admin with id: " + id);
 		}
 		
 		// Delete Admin by ID
@@ -91,7 +93,7 @@ public class AdminServiceImpl implements AdminService {
 	public AdminDTO findByEmail(String name) {
 		// Find Admin by email
 		Admin admin = adminRepository.findByEmail(name)
-				.orElseThrow(() -> new RuntimeException("Admin not found with email: " + name));
+				.orElseThrow(() -> new EntityNotFoundException("Admin not found with name: " + name));
 		
 		// Convert to AdminDTO and return
 		AdminDTO adminDto = modelMapper.map(admin, AdminDTO.class);
@@ -102,20 +104,7 @@ public class AdminServiceImpl implements AdminService {
 	public void updateSuperAdminStatus(Long id, Boolean superAdmin) {
 		// Find Admin by ID
 		Admin admin = adminRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Admin not found with id: " + id));
-		
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		System.out.println(superAdmin);
-		
+				.orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
 		
 		// Update superAdmin status
 		admin.setSuperAdmin(superAdmin);

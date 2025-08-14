@@ -18,6 +18,7 @@ import com.pruebas.sistema_inventario.dtos.ProductDTO;
 import com.pruebas.sistema_inventario.entities.InventoryMovement;
 import com.pruebas.sistema_inventario.entities.Product;
 import com.pruebas.sistema_inventario.entities.TypeMovement;
+import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.InventoryMovementRepository;
 import com.pruebas.sistema_inventario.repository.ProductRepository;
 import com.pruebas.sistema_inventario.service.interfaces.InventoryMovementService;
@@ -37,7 +38,7 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 	@Override
 	public InventoryMovementDTO save(InventoryMovementDTO movementDTO) {
 		Product product = productRepository.findById(movementDTO.getProduct().getId())
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + movementDTO.getProduct().getId()));
 		movementDTO.setBeforeStock(product.getStockActual());
 		
 		if(movementDTO.getTypeMovement() == TypeMovement.IN) {
@@ -71,7 +72,7 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 	@Override
 	public InventoryMovementDTO findById(Long id) {
 		InventoryMovement movement = inventoryMovementRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Inventory movement not found with id: " + id));
 		return modelMapper.map(movement, InventoryMovementDTO.class);
 	}
 
@@ -86,7 +87,7 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 	@Override
 	public InventoryMovementDTO update(Long id, InventoryMovementDTO movementDto) {
 		InventoryMovement movement = inventoryMovementRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Inventory movement not found with id: " + id));
 		movement.setProduct(modelMapper.map(movementDto.getProduct(), Product.class));
 		movement.setTypeMovement(movementDto.getTypeMovement());
 		movement.setAmount(movementDto.getAmount());

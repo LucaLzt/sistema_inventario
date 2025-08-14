@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.CategoryDTO;
 import com.pruebas.sistema_inventario.entities.Category;
+import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.CategoryRepository;
 import com.pruebas.sistema_inventario.service.interfaces.CategoryService;
 
@@ -29,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public CategoryDTO findById(Long id) {
 		Category category = categoryRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
 		return modelMapper.map(category, CategoryDTO.class);
 	}
 
@@ -44,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public CategoryDTO update(Long id, CategoryDTO categoryDto) {
 		Category category = categoryRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
 		category.setName(categoryDto.getName());
 		category.setDescription(categoryDto.getDescription());
 		Category updated = categoryRepository.save(category);

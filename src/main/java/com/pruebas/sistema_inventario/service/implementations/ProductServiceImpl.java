@@ -18,6 +18,7 @@ import com.pruebas.sistema_inventario.entities.Category;
 import com.pruebas.sistema_inventario.entities.InventoryMovement;
 import com.pruebas.sistema_inventario.entities.Product;
 import com.pruebas.sistema_inventario.entities.TypeMovement;
+import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.ProductRepository;
 import com.pruebas.sistema_inventario.service.interfaces.ProductService;
 import com.pruebas.sistema_inventario.specifications.ProductByBranchSpecification;
@@ -35,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
 	public ProductDTO save(ProductDTO productDto) {
 		Product product = modelMapper.map(productDto, Product.class);
 		if(product == null || product.getCategory() == null) {
-			throw new RuntimeException();
+			throw new IllegalArgumentException("Product or its category must not be null");
 		}
 		Product saved = productRepository.save(product);
 		return modelMapper.map(saved, ProductDTO.class);
@@ -44,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductDTO findById(Long id) {
 		Product product = productRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
 		return modelMapper.map(product, ProductDTO.class);
 	}
 
@@ -59,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductDTO update(Long id, ProductDTO productDto) {
 		Product product = productRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
 		product.setName(productDto.getName());
 		product.setDescription(productDto.getDescription());
 		product.setPriceUnit(productDto.getPriceUnit());
@@ -141,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
 	public BigDecimal earningPerProduct(Long id, ProductDTO productDto) {
 		BigDecimal earnings = BigDecimal.ZERO;
 		Product product = productRepository.findById(productDto.getId())
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productDto.getId()));
 		for(InventoryMovement mov : product.getMovements()) {
 			BigDecimal movementTotal = BigDecimal.ZERO;
 			

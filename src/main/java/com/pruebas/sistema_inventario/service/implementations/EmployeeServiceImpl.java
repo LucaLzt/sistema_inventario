@@ -9,6 +9,8 @@ import com.pruebas.sistema_inventario.dtos.RegisterDTO;
 import com.pruebas.sistema_inventario.entities.Branch;
 import com.pruebas.sistema_inventario.entities.Employee;
 import com.pruebas.sistema_inventario.entities.Role;
+import com.pruebas.sistema_inventario.exceptions.ActiveUserException;
+import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.BranchRepository;
 import com.pruebas.sistema_inventario.repository.EmployeeRepository;
 import com.pruebas.sistema_inventario.service.interfaces.EmployeeService;
@@ -49,7 +51,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public EmployeeDTO findById(Long id) {
 		// Find Employee by ID
 		Employee employee = employeeRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 		
 		// Convert to EmployeeDTO and return
 		EmployeeDTO employeeDto = modelMapper.map(employee, EmployeeDTO.class);
@@ -60,7 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public EmployeeDTO update(Long id, EmployeeDTO employeeDto) {
 		// Find Employee by ID
 		Employee employee = employeeRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 		
 		// Update Employee fields
 		employee.setFullName(employeeDto.getFullName());
@@ -79,11 +81,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public void deleteById(Long id) {
 		// Check if Employee exists
 		Employee employee = employeeRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 		
 		// Check if Employee is not active
 		if (employee.isActive()) {
-			throw new RuntimeException("Cannot delete active employee with id: " + id);
+			throw new ActiveUserException("Cannot delete active employee with id: " + id);
 		}
 		
 		// Delete Employee by ID
@@ -94,7 +96,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public EmployeeDTO findByEmail(String email) {
 		// Find Employee by email
 		Employee employee = employeeRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Employee not found with email: " + email));
+				.orElseThrow(() -> new EntityNotFoundException("Employee not found with email: " + email));
 		
 		// Convert to EmployeeDTO and return
 		EmployeeDTO employeeDto = modelMapper.map(employee, EmployeeDTO.class);
@@ -105,11 +107,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public void updateBranch(Long id, Long branchId) {
 		// Find Employee by ID
 		Employee employee = employeeRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
+				.orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 		
 		// Find Branch by ID
 		Branch branch = branchRepository.findById(branchId)
-				.orElseThrow(() -> new RuntimeException("Branch not found with id: " + branchId));
+				.orElseThrow(() -> new EntityNotFoundException("Branch not found with id: " + branchId));
 		
 		// Update Employee's branch ID
 		employee.setBranch(branch);

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.pruebas.sistema_inventario.dtos.BranchDTO;
 import com.pruebas.sistema_inventario.entities.Branch;
+import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.BranchRepository;
 import com.pruebas.sistema_inventario.service.interfaces.BranchService;
 
@@ -29,7 +30,7 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public BranchDTO findById(Long id) {
 		Branch branch = branchRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Branch not found with id: " + id));
 		return modelMapper.map(branch, BranchDTO.class);
 	}
 
@@ -44,7 +45,7 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public BranchDTO update(Long id, BranchDTO branchDto) {
 		Branch branch = branchRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new EntityNotFoundException("Branch not found with id: " + id));
 		branch.setName(branchDto.getName());
 		branch.setAddress(branchDto.getAddress());
 		Branch updated = branchRepository.save(branch);
