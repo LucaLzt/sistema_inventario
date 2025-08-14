@@ -1,5 +1,6 @@
 package com.pruebas.sistema_inventario.controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +27,7 @@ public class CategoryController {
 	private final ProductService productService;
 	
 	@PostMapping("/add")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String addCategory(@Valid @ModelAttribute("category") CategoryDTO categoryDto, 
 			BindingResult result,
 			Model model) {

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,6 +62,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("/add")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String addProduct(@Valid @ModelAttribute("product") ProductDTO productDto,
 			BindingResult result, 
 			@RequestParam String fromView,
@@ -131,6 +133,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("/edit")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String editProduct(@Valid @ModelAttribute("product") ProductDTO productDto,
 			BindingResult result, 
 			@RequestParam(required = false) String search,
@@ -158,6 +161,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("/delete/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String deleteProduct(@PathVariable Long id) {
 		productService.deleteById(id);
 		return "redirect:/products/home?delete=ok";

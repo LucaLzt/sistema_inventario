@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,6 +65,7 @@ public class MovementsController {
     }
 	
 	@PostMapping("/add")
+	@PreAuthorize("hasRole('ADMIN')")
 	public String addMovement(@Valid @ModelAttribute("movement") InventoryMovementDTO movementDto,
 			BindingResult result,
 			@RequestParam String fromView,
@@ -134,7 +136,8 @@ public class MovementsController {
 	}
 	
 	@PostMapping("/delete/{id}")
-	public String deleteProduct(@PathVariable Long id) {
+	@PreAuthorize("hasRole('ADMIN')")
+	public String deleteMovement(@PathVariable Long id) {
 		movementService.deleteById(id);
 		return "redirect:/movements/home?delete=ok";
 	}

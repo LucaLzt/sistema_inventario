@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ import lombok.Builder;
 
 @Controller @Builder
 @RequestMapping("/admins")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 	
 	private static final int PAGE_SIZE = 11; // Default page size for pagination

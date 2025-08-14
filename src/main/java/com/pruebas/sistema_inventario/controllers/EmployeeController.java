@@ -2,6 +2,7 @@ package com.pruebas.sistema_inventario.controllers;
 
 import java.security.Principal;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import lombok.Builder;
 
 @Controller @Builder
 @RequestMapping("/employees")
+@PreAuthorize("hasRole('EMPLOYEE')")
 public class EmployeeController {
 	
 	private final EmployeeService employeeService;
