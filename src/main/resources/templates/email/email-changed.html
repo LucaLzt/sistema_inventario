@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Address Changed</title>
+</head>
+<body>
+    <h2 style="color: #1976d2;">Hello, <span th:text="${name}"></span></h2>
+    <p>Your account email address was <b style="color:green;">changed successfully</b> on <b th:text="${dateTime}"></b>.</p>
+    <p>
+        <b>Old email:</b> <span th:text="${oldEmail}"></span><br>
+        <b>New email:</b> <span th:text="${newEmail}"></span>
+    </p>
+    <p>If you <b>did not perform this change,</b> please contact our support team <span style="text-decoration:underline;">immediately</span> to secure your account.</p>
+    <hr>
+    <small>This email was generated automatically. Please do not reply.</small>
+</body>
+</html>

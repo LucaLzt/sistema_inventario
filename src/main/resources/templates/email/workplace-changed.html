@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Workplace Updated</title>
+</head>
+<body>
+    <h2 style="color: #1976d2;">Hello, <span th:text="${name}"></span></h2>
+    <p>Your workplace information was <b style="color:green;">updated successfully</b> on <b th:text="${dateTime}"></b>.</p>
+    <p>
+        <b>Previous workplace:</b> <span th:text="${oldWorkplace}">Old Company</span><br>
+        <b>New workplace:</b> <span th:text="${newWorkplace}"></span>
+    </p>
+    <p>If you <b>did not request this change,</b> please contact our support team <span style="text-decoration:underline;">immediately</span> to review your account activity.</p>
+    <hr>
+    <small>This email was generated automatically. Please do not reply.</small>
+</body>
+</html>

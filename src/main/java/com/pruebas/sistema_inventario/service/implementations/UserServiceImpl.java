@@ -35,13 +35,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailServiceImpl emailService;
 	private final ModelMapper modelMapper;
 	
-	public UserServiceImpl(UserRepository userRepository, 
-			PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, 
+			EmailServiceImpl emailService, ModelMapper modelMapper) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.emailService = emailService;
 		this.modelMapper = modelMapper;
+		
 	}
 	
 	@Override
@@ -84,6 +87,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		// Encode new password and set it
 		user.setPassword(passwordEncoder.encode(passwordChange.getNewPassword()));
 		userRepository.save(user);
+		
+		// If everything went well, we send an email
+		try {
+			emailService.sendPasswordChangeEmail(user.getEmail(), user.getFullName());
+		} catch (Exception e) {
+			throw new RuntimeException("Error sending password change email", e);
+		}
 	}
 
 	@Override
@@ -104,7 +114,14 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		user.setApproved(true);
 		
 		// Save the updated user
-		userRepository.save(user);
+		User savedUser = userRepository.save(user);
+		
+		// If everything went well, we send an email
+		try {
+			emailService.sendAcceptUserEmail(savedUser.getEmail(), savedUser.getFullName());
+		} catch (Exception e) {
+			throw new RuntimeException("Error sending acceptance email", e);
+		}
 	}
 
 	@Override
@@ -115,6 +132,13 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		
 		// Delete the user
 		userRepository.delete(user);
+		
+		// If everything went well, we send an email
+		try {
+			emailService.sendRejectUserEmail(user.getEmail(), user.getFullName());
+		} catch (Exception e) {
+			throw new RuntimeException("Error sending acceptance email", e);
+		}
 	}
 	
 	@Override

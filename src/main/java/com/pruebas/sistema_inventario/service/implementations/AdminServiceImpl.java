@@ -9,6 +9,7 @@ import com.pruebas.sistema_inventario.dtos.RegisterDTO;
 import com.pruebas.sistema_inventario.entities.Admin;
 import com.pruebas.sistema_inventario.entities.Role;
 import com.pruebas.sistema_inventario.exceptions.ActiveUserException;
+import com.pruebas.sistema_inventario.exceptions.EmailException;
 import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.AdminRepository;
 import com.pruebas.sistema_inventario.service.interfaces.AdminService;
@@ -20,6 +21,7 @@ public class AdminServiceImpl implements AdminService {
 	
 	private final AdminRepository adminRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailServiceImpl emailService;
 	private final ModelMapper modelMapper;
 	
 	@Override
@@ -37,10 +39,17 @@ public class AdminServiceImpl implements AdminService {
 		admin.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 		
 		// Save Admin Entity
-		adminRepository.save(admin);
+		Admin savedAdmin = adminRepository.save(admin);
+		
+		// Send registration email
+		try {
+			emailService.sendRegistrationEmail(savedAdmin.getEmail(), savedAdmin.getFullName());
+		} catch (Exception e) {
+			throw new RuntimeException("Error sending registration email", e);
+		}
 		
 		// Convert to DTO and return
-		AdminDTO adminDto = modelMapper.map(admin, AdminDTO.class);
+		AdminDTO adminDto = modelMapper.map(savedAdmin, AdminDTO.class);
 		return adminDto;
 	}
 
@@ -61,6 +70,16 @@ public class AdminServiceImpl implements AdminService {
 		Admin admin = adminRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
 		
+		// Check if email is being changed
+		boolean flag = false;
+		String auxEmail = "";
+		String auxFullName = "";
+		if(!admin.getEmail().equals(adminDto.getEmail())) {
+			flag = true;
+			auxEmail = admin.getEmail();
+			auxFullName = admin.getFullName();
+		}
+		
 		// Update Admin fields
 		admin.setEmail(adminDto.getEmail());
 		admin.setFullName(adminDto.getFullName());
@@ -68,6 +87,16 @@ public class AdminServiceImpl implements AdminService {
 		
 		// Save updated Admin entity
 		Admin updatedAdmin = adminRepository.save(admin);
+		
+		// If email was changed, send notification
+		if(flag) {
+			try {
+				emailService.sendEmailChangeEmail(auxEmail, auxFullName, auxEmail, updatedAdmin.getEmail());
+				emailService.sendEmailChangeEmail(updatedAdmin.getEmail(), updatedAdmin.getFullName(), auxEmail, updatedAdmin.getEmail());
+			} catch (Exception e) {
+				throw new EmailException("Error sending email change notification.");
+			}
+		}
 		
 		// Convert to AdminDTO and return
 		AdminDTO updatedAdminDto = modelMapper.map(updatedAdmin, AdminDTO.class);
@@ -106,8 +135,22 @@ public class AdminServiceImpl implements AdminService {
 		Admin admin = adminRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
 		
+		// Save the super admin status in an auxiliary
+		boolean auxSuperAdmin = admin.isSuperAdmin();
+		
 		// Update superAdmin status
 		admin.setSuperAdmin(superAdmin);
+		
+		// If superAdmin status was changed, send notification
+		if (auxSuperAdmin != superAdmin) {
+			try {
+				emailService.sendPrivilegedUpdatedEmail(admin.getEmail(), admin.getFullName(), 
+						auxSuperAdmin == true ? "Super Admin" : "Regular Admin", 
+						superAdmin == true ? "Super Admin" : "Regular Admin");
+			} catch (Exception e) {
+				throw new EmailException("Error sending super admin status notification.");
+			}
+		}
 		
 		// Save updated Admin entity
 		adminRepository.save(admin);

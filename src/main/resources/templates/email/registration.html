@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Successful</title>
+</head>
+<body>
+    <h2 style="color: #1976d2;">Welcome, <span th:text="${name}"></span>!</h2>
+    <p>Thank you for registering on our platform.</p>
+    <p>Your account has been received and is pending approval by a system administrator.</p>
+    <p>You will be notified by email once your registration is approved and your account is activated.</p>
+    <p>Registration date: <b th:text="${dateTime}"></b></p>
+    <hr>
+    <small>This email was generated automatically. Please do not reply.</small>
+</body>
+</html>

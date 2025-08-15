@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Approved</title>
+</head>
+<body>
+    <h2 style="color: #1976d2;">Welcome, <span th:text="${name}"></span>!</h2>
+    <p>Your registration has been <b style="color:green;">approved</b> by our system administrator.</p>
+    <p>You can now access all features of our platform using your account.</p>
+    <p>Approval date: <b th:text="${dateTime}"></b></p>
+    <hr>
+    <small>This email was generated automatically. Please do not reply.</small>
+</body>
+</html>

@@ -10,6 +10,7 @@ import com.pruebas.sistema_inventario.entities.Branch;
 import com.pruebas.sistema_inventario.entities.Employee;
 import com.pruebas.sistema_inventario.entities.Role;
 import com.pruebas.sistema_inventario.exceptions.ActiveUserException;
+import com.pruebas.sistema_inventario.exceptions.EmailException;
 import com.pruebas.sistema_inventario.exceptions.EntityNotFoundException;
 import com.pruebas.sistema_inventario.repository.BranchRepository;
 import com.pruebas.sistema_inventario.repository.EmployeeRepository;
@@ -23,6 +24,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	private final EmployeeRepository employeeRepository;
 	private final BranchRepository branchRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final EmailServiceImpl emailService;
 	private final ModelMapper modelMapper;
 	
 	@Override
@@ -40,10 +42,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employee.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 		
 		// Save Employee Entity
-		employeeRepository.save(employee);
+		Employee savedEmployee = employeeRepository.save(employee);
+		
+		// Send registration email
+		try {
+			emailService.sendRegistrationEmail(savedEmployee.getEmail(), savedEmployee.getFullName());
+		} catch (Exception e) {
+			throw new RuntimeException("Error sending registration email", e);
+		}
 		
 		// Convert to DTO and return
-		EmployeeDTO employeeDto = modelMapper.map(employee, EmployeeDTO.class);
+		EmployeeDTO employeeDto = modelMapper.map(savedEmployee, EmployeeDTO.class);
 		return employeeDto;
 	}
 
@@ -64,6 +73,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Employee employee = employeeRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 		
+		// Check if email is being changed
+		boolean flag = false;
+		String auxEmail = "";
+		String auxFullName = "";
+		if(!employee.getEmail().equals(employeeDto.getEmail())) {
+			flag = true;
+			auxEmail = employee.getEmail();
+			auxFullName = employee.getFullName();
+		}
+		
 		// Update Employee fields
 		employee.setFullName(employeeDto.getFullName());
 		employee.setEmail(employeeDto.getEmail());
@@ -71,6 +90,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		// Save updated Employee Entity
 		Employee updatedEmployee = employeeRepository.save(employee);
+		
+		// If email was changed, send notification
+		if(flag) {
+			try {
+				emailService.sendEmailChangeEmail(auxEmail, auxFullName, auxEmail, updatedEmployee.getEmail());
+				emailService.sendEmailChangeEmail(updatedEmployee.getEmail(), updatedEmployee.getFullName(), auxEmail, updatedEmployee.getEmail());
+			} catch (Exception e) {
+				throw new EmailException("Error sending email change notification.");
+			}
+		}
 		
 		// Convert to EmployeeDTO and return
 		EmployeeDTO updatedEmployeeDto = modelMapper.map(updatedEmployee, EmployeeDTO.class);
@@ -109,6 +138,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Employee employee = employeeRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
 		
+		// Save the branch in an auxiliary
+		String auxBranch = employee.getBranch() != null ? (employee.getBranch().getName() + " " + employee.getBranch().getAddress()) : "None";
+		
 		// Find Branch by ID
 		Branch branch = branchRepository.findById(branchId)
 				.orElseThrow(() -> new EntityNotFoundException("Branch not found with id: " + branchId));
@@ -118,6 +150,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		// Save the updated Employee
 		employeeRepository.save(employee);
+		
+		// Send notification email about workplace change
+		try {
+			emailService.sendWorkplaceChangedEmail(employee.getEmail(), employee.getFullName(), 
+					auxBranch, 
+					(branch.getName() + " " + branch.getAddress()));
+		} catch (Exception e) {
+			throw new EmailException("Error sending workplace change notification.");
+		}
 	};
 	
 }

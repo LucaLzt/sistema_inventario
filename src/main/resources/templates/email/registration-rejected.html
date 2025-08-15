@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Rejected</title>
+</head>
+<body>
+    <h2 style="color: #d32f2f;">Hello, <span th:text="${name}"></span></h2>
+    <p>We regret to inform you that your registration has been <b style="color:red;">rejected</b> by our system administrator.</p>
+    <p>If you have questions or believe this was a mistake, please contact our support team.</p>
+    <p>Rejection date: <b th:text="${dateTime}"></b></p>
+    <hr>
+    <small>This email was generated automatically. Please do not reply.</small>
+</body>
+</html>
