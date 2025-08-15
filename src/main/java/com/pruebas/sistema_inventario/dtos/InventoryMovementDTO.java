@@ -30,9 +30,9 @@ public class InventoryMovementDTO {
 	@Min(value = 1, message = "Amount must be at least 1.")
 	private Integer amount;
 	
-	@NotNull(message = "Price unit cannot be null.")
-	@Min(value = 1, message = "Price unit must be at least 1.")
 	private BigDecimal priceUnit;
+	
+	private BigDecimal sellingPrice;
 	
 	@NotNull(message = "Motive cannot be null.")
 	@Size(min = 1, max = 100, message = "Motive must be between 1 and 100 characters.")

@@ -108,6 +108,7 @@
 		                            <th>Name</th>
 		                            <th>Category</th>
 		                            <th>Price</th>
+		                            <th>Selling Price</th>
 		                            <th>Stock</th>
 		                            <th>Status</th>
 		                            <th>Actions</th>
@@ -119,6 +120,7 @@
 			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].name : '—'}"></td>
 			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].category.name : '—'}"></td>
 			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].priceUnit : '—'}"></td>
+			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].sellingPrice : '—'}"></td>
 			                        <td th:text="${#lists.size(products.content) > i ? products.content[i].stockActual : '—'}"></td>
 			                        <td th:text="${#lists.size(products.content) > i ? (products.content[i].active ? 'Active' : 'Inactive') : '—'}"></td>
 		                    		<td>
@@ -134,7 +136,7 @@
 			                                                 data-code=${products.content[i].code},
 			                                                 data-description=${products.content[i].description},
 			                                                 data-priceunit=${products.content[i].priceUnit},
-			                                                 data-stockactual=${products.content[i].stockActual},
+			                                                 data-sellingpercentage=${products.content[i].sellingPercentage},
 			                                                 data-stockminimum=${products.content[i].stockMinimum},
 			                                                 data-categoryid=${products.content[i].category.id},
 			                                                 data-active=${products.content[i].active}">

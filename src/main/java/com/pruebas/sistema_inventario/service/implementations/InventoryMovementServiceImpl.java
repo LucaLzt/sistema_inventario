@@ -58,6 +58,7 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 		ProductDTO updated = productService.update(product.getId(), modelMapper.map(product, ProductDTO.class));
 		movementDTO.setAfterStock(updated.getStockActual());
 	    movementDTO.setPriceUnit(updated.getPriceUnit());
+	    movementDTO.setSellingPrice(updated.getSellingPrice());
 		
 	    // If date is null, we set the current date
 	    if (movementDTO.getMovementDate() == null) {
@@ -95,7 +96,6 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 		movement.setMotive(movementDto.getMotive());
 		movement.setBeforeStock(movementDto.getBeforeStock());
 		movement.setAfterStock(movementDto.getAfterStock());
-		movement.setRegisteredUser(movementDto.getRegisteredUser());
 		InventoryMovement updated = inventoryMovementRepository.save(movement);
 		return modelMapper.map(updated, InventoryMovementDTO.class);
 	}
@@ -107,13 +107,13 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 	
 	@Override
 	public Page<InventoryMovementDTO> filtered(LocalDate dateFrom, LocalDate dateTo, 
-			TypeMovement type, String user, Long productId, int page, int size) {
+			TypeMovement type, Long productId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "movementDate"));
 		ProductDTO product = null;
 		if (productId != null) {
 		    product = productService.findById(productId);
 		}
-	    var spec = InventoryMovementSpecification.filter(dateFrom, dateTo, type, user, product);
+	    var spec = InventoryMovementSpecification.filter(dateFrom, dateTo, type, product);
 	    Page<InventoryMovement> movements = inventoryMovementRepository.findAll(spec, pageable);
 	    return movements.map(object -> modelMapper.map(object, InventoryMovementDTO.class));
 	}
@@ -136,14 +136,14 @@ public class InventoryMovementServiceImpl implements InventoryMovementService {
 
 	@Override
 	public Page<InventoryMovementDTO> findByBranchWithFilters(Long branchId, LocalDate dateFrom, LocalDate dateTo, TypeMovement type,
-			String user, Long productId, int page, int size) {
+			Long productId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		ProductDTO product = null;
 		if (productId != null) {
 		    product = productService.findById(productId);
 		}
 		Specification<InventoryMovement> spec = InventoryMovementSpecification.filterByBranch(branchId, dateFrom, dateTo, 
-				type, user, product);
+				type, product);
 		Page<InventoryMovement> movements = inventoryMovementRepository.findAll(spec, pageable);
 	    return movements.map(object -> modelMapper.map(object, InventoryMovementDTO.class));
 	}

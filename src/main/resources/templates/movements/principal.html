@@ -85,7 +85,6 @@
 	                        <tr>
 	                            <th>Date</th>
 	                            <th>Type</th>
-	                            <th>User</th>
 	                            <th>Product</th>
 	                            <th>Amount</th>
 	                            <th>Unit Price</th>
@@ -103,10 +102,9 @@
 						            <span th:unless="${#lists.size(movements.content) > i}">—</span>
 						        </td>
 	        					<td th:text="${#lists.size(movements.content) > i ? movements.content[i].typeMovement : '—'}"></td>
-						        <td th:text="${#lists.size(movements.content) > i ? movements.content[i].registeredUser : '—'}"></td>
 						        <td th:text="${#lists.size(movements.content) > i ? movements.content[i].product.name : '—'}"></td>
 						        <td th:text="${#lists.size(movements.content) > i ? movements.content[i].amount : '—'}"></td>
-						        <td th:text="${#lists.size(movements.content) > i ? movements.content[i].priceUnit : '—'}"></td>
+						        <td th:text="${#lists.size(movements.content) > i ? (movements.content[i].typeMovement.toString() == 'IN' ? movements.content[i].priceUnit : movements.content[i].sellingPrice) : '—'}"></td>
 						        <td th:text="${#lists.size(movements.content) > i ? movements.content[i].beforeStock : '—'}"></td>
 						        <td th:text="${#lists.size(movements.content) > i ? movements.content[i].afterStock : '—'}"></td>
 						        <td th:text="${#lists.size(movements.content) > i ? movements.content[i].motive : '—'}"></td>

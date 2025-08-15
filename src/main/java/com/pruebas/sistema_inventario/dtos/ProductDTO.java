@@ -34,6 +34,8 @@ public class ProductDTO {
 	@DecimalMin(value = "0.01", message = "Selling percentage must be greater than 0.")
 	private BigDecimal sellingPercentage;
 	
+	private BigDecimal sellingPrice;
+	
 	@Builder.Default Integer stockActual = 0;
 	
 	@NotNull(message = "Stock minimum is required.")

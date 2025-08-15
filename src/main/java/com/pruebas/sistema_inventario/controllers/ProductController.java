@@ -1,7 +1,5 @@
 package com.pruebas.sistema_inventario.controllers;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
@@ -123,9 +121,6 @@ public class ProductController {
 		
 		// If there are no validation errors, proceed to save the product
 		productDto.setCode(productCodeGenerator.generateUserCode("LucaLzt"));
-		productDto.setSellingPercentage(productDto.getSellingPercentage()
-				.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
-				.add(BigDecimal.ONE));
 		productService.save(productDto);
 		
 		// If the product was added successfully, redirect to the appropriate view

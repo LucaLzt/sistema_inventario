@@ -132,7 +132,7 @@ public class BranchController {
 			int page, Model model) {
 		
 		Page<InventoryMovementDTO> movementsFiltered = movementService.findByBranchWithFilters(branchId, dateFrom, dateTo, 
-				type, "system", productId, page, 5);
+				type, productId, page, 5);
 		
 		// Add attributes to the model with prefix "mv"
 		model.addAttribute("movements", movementsFiltered.getContent());
@@ -153,6 +153,13 @@ public class BranchController {
 		model.addAttribute("categories", categoryService.findAll());
 		model.addAttribute("types", Arrays.asList(TypeMovement.values()));
 		model.addAttribute("products", productService.findAll());
+	}
+	
+	@PostMapping("/delete/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public String deleteBranch(@PathVariable Long id) {
+		branchService.deleteById(id);
+		return "redirect:/branches/home?delete=ok";
 	}
 	
 }

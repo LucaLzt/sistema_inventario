@@ -1,5 +1,6 @@
 package com.pruebas.sistema_inventario.controllers;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -38,14 +39,15 @@ public class MovementsController {
 	private final InventoryMovementService movementService;
 	
 	@GetMapping("/home")
-    public String movementsHome(
+    public String movementsHome(Principal principal,
     		@RequestParam(required = false) LocalDate dateFrom,
     		@RequestParam(required = false) LocalDate dateTo,
     		@RequestParam(required = false) TypeMovement type,
     		@RequestParam(required = false) Long productId,
     		@RequestParam(defaultValue = "0") int page,
     		Model model) {
-		Page<InventoryMovementDTO> filtered = movementService.filtered(dateFrom, dateTo, type, "system", productId, page, PAGE_SIZE);
+		Page<InventoryMovementDTO> filtered = movementService.filtered(dateFrom, dateTo, type, productId, page, PAGE_SIZE);
+		
 		model.addAttribute("movement", new InventoryMovementDTO());
         model.addAttribute("movements", filtered);
         model.addAttribute("types", Arrays.asList(TypeMovement.values()));
@@ -110,7 +112,7 @@ public class MovementsController {
 		        // Redirect to the home view with the modal open
 				return "home/index";
 			} else if(fromView.equals("movement")) {
-				Page<InventoryMovementDTO> filtered = movementService.filtered(dateFrom, dateTo, type, "system", productId, page, PAGE_SIZE);
+				Page<InventoryMovementDTO> filtered = movementService.filtered(dateFrom, dateTo, type, productId, page, PAGE_SIZE);
 				
 		        model.addAttribute("movements", filtered);
 		        model.addAttribute("types", Arrays.asList(TypeMovement.values()));

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,6 +46,9 @@ public class Product {
 	@Column(name = "selling_percentage", precision = 10, scale = 2, nullable = false)
 	private BigDecimal sellingPercentage;
 	
+	@Column(name = "selling_price", precision = 10, scale = 2, nullable = true)
+	private BigDecimal sellingPrice;
+	
 	@Column(name = "stock_actual", nullable = false)
 	private Integer stockActual;
 	
@@ -63,5 +67,8 @@ public class Product {
 	
 	@CreationTimestamp
 	private LocalDateTime createdAt;
+	
+	@UpdateTimestamp
+	private LocalDateTime updatedAt;
 	
 }

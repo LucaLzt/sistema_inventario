@@ -38,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
 		if(product == null || product.getCategory() == null) {
 			throw new IllegalArgumentException("Product or its category must not be null");
 		}
+		product.setSellingPrice(product.getPriceUnit().multiply(product.getSellingPercentage()));
 		Product saved = productRepository.save(product);
 		return modelMapper.map(saved, ProductDTO.class);
 	}
@@ -64,6 +65,8 @@ public class ProductServiceImpl implements ProductService {
 		product.setName(productDto.getName());
 		product.setDescription(productDto.getDescription());
 		product.setPriceUnit(productDto.getPriceUnit());
+		product.setSellingPercentage(productDto.getSellingPercentage());
+		product.setSellingPrice(productDto.getPriceUnit().multiply(productDto.getSellingPercentage()));
 		product.setStockActual(productDto.getStockActual());
 		product.setStockMinimum(productDto.getStockMinimum());
 		product.setActive(productDto.isActive());
@@ -151,14 +154,11 @@ public class ProductServiceImpl implements ProductService {
 						.multiply(productDto.getSellingPercentage())
 						.multiply(BigDecimal.valueOf(mov.getAmount()));
 				earnings = earnings.add(movementTotal);
-				System.out.println("OUT Actual Earnings: " + earnings);
-				System.out.println("Seelling Percentage: " + productDto.getSellingPercentage());
 			} 
 			else if(mov.getTypeMovement() == TypeMovement.IN) { // MovementTotal = PriceUnit * Amount
 				movementTotal = mov.getPriceUnit()
 						.multiply(BigDecimal.valueOf(mov.getAmount()));
 				earnings = earnings.subtract(movementTotal);
-				System.out.println("IN Actual Earnings: " + earnings);
 			}	
 		}
 		return earnings;

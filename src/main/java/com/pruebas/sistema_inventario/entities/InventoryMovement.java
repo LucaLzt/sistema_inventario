@@ -44,6 +44,9 @@ public class InventoryMovement {
 	@Column(name = "price_unit", precision = 10, scale = 2)
 	private BigDecimal priceUnit;
 	
+	@Column(name = "selling_price", precision = 10, scale = 2)
+	private BigDecimal sellingPrice;
+	
 	@Column(name = "motive", nullable = true)
 	private String motive;
 	
@@ -52,9 +55,6 @@ public class InventoryMovement {
 	
 	@Column(name = "after_stock", nullable = false)
 	private Integer afterStock;
-	
-	@Column(name = "registered_user", nullable = false)
-	private String registeredUser = "system";
 	
 	@ManyToOne
 	@JoinColumn(name = "branch_id", nullable = false)

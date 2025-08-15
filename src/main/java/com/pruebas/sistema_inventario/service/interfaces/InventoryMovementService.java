@@ -21,13 +21,13 @@ public interface InventoryMovementService {
 	void deleteById(Long id);
 
 	Page<InventoryMovementDTO> filtered(LocalDate dateFrom, LocalDate dateTo, 
-			TypeMovement type, String user, Long productId, int page, int size);
+			TypeMovement type, Long productId, int page, int size);
 
 	List<InventoryMovementDTO> lastestMovements();
 
 	List<InventoryMovementDTO> findByBranch(Long id);
 
 	Page<InventoryMovementDTO> findByBranchWithFilters(Long branchId, LocalDate dateFrom, LocalDate dateTo,
-			TypeMovement type, String user, Long productId, int page, int size);
+			TypeMovement type, Long productId, int page, int size);
 	
 }

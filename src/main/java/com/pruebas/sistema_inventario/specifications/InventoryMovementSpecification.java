@@ -16,7 +16,6 @@ public class InventoryMovementSpecification {
 			LocalDate dateFrom,
 			LocalDate dateTo,
 	        TypeMovement type,
-	        String user,
 	        ProductDTO product
 	) {
 	    return (root, query, cb) -> {
@@ -33,9 +32,6 @@ public class InventoryMovementSpecification {
 	        if (type != null) {
 	            predicate = cb.and(predicate, cb.equal(root.get("typeMovement"), type));
 	        }
-	        if (user != null && !user.isBlank()) {
-	            predicate = cb.and(predicate, cb.equal(root.get("registeredUser"), user));
-	        }
 	        if (product != null && product.getId() != null) {
 	            predicate = cb.and(predicate, cb.equal(root.get("product").get("id"), product.getId()));
 	        }
@@ -49,7 +45,6 @@ public class InventoryMovementSpecification {
 			LocalDate dateFrom,
 			LocalDate dateTo,
 			TypeMovement type,
-			String user,
 			ProductDTO product
 	) {
 		return (root, query, cb) -> {
@@ -69,9 +64,6 @@ public class InventoryMovementSpecification {
 
 	        if (type != null) {
 	            predicate = cb.and(predicate, cb.equal(root.get("typeMovement"), type));
-	        }
-	        if (user != null && !user.isBlank()) {
-	            predicate = cb.and(predicate, cb.equal(root.get("registeredUser"), user));
 	        }
 	        if (product != null && product.getId() != null) {
 	            predicate = cb.and(predicate, cb.equal(root.get("product").get("id"), product.getId()));

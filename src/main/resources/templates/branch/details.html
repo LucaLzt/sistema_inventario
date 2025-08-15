@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      			xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 	<meta charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -23,6 +24,10 @@
 		            <h5 class="mb-0 text-muted">
 		                Details for <span th:text="${branch.name}">Name</span> - <span th:text="${branch.address}">Address</span>
 		            </h5>
+		            <form th:action="@{'/branches/delete/' + ${branch.id}}" method="post" 
+		            	  class="ms-2" sec:authorize="hasRole('ADMIN')">
+			            <button type="submit" class="btn btn-outline-danger">Delete Branch</button>
+			        </form>
 		        </div>
 		    </div>
 		    <div class="ms-auto">
@@ -124,6 +129,7 @@
 			                        <th>Name</th>
 			                        <th>Category</th>
 			                        <th>Price</th>
+			                        <th>Selling Price</th>
 			                        <th>Stock</th>
 			                        <th>Status</th>
 			                        <th>Earnings</th>
@@ -135,6 +141,7 @@
 			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.name : '—'}"></td>
 			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.category.name : '—'}"></td>
 			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.priceUnit : '—'}"></td>
+			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.sellingPrice : '—'}"></td>
 			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].product.stockActual : '—'}"></td>
 			                        <td th:text="${#lists.size(productEarnings) > i ? (productEarnings[i].product.active ? 'Active' : 'Inactive') : '—'}"></td>
 			                        <td th:text="${#lists.size(productEarnings) > i ? productEarnings[i].earnings : '—'}"></td>
@@ -272,7 +279,6 @@
 		                        <tr>
 		                            <th>Date</th>
 		                            <th>Type</th>
-		                            <th>User</th>
 		                            <th>Product</th>
 		                            <th>Amount</th>
 		                            <th>Unit Price</th>
@@ -285,10 +291,9 @@
 		                        <tr th:each="i : ${#numbers.sequence(0, 4)}">
 		                            <td th:text="${#lists.size(movements) > i ? #temporals.format(movements[i].movementDate, 'yyyy-MM-dd HH:mm') : '—' }"></td>
 		                            <td th:text="${#lists.size(movements) > i ? movements[i].typeMovement : '—'}"></td>
-		                            <td th:text="${#lists.size(movements) > i ? movements[i].registeredUser : '—'}"></td>
 		                            <td th:text="${#lists.size(movements) > i ? movements[i].product.name : '—'}"></td>
 		                            <td th:text="${#lists.size(movements) > i ? movements[i].amount : '—'}"></td>
-		                            <td th:text="${#lists.size(movements) > i ? movements[i].priceUnit : '—'}"></td>
+		                            <td th:text="${#lists.size(movements) > i ? (movements[i].typeMovement.toString() == 'IN' ? movements[i].priceUnit : movements[i].sellingPrice) : '—'}"></td>
 		                            <td th:text="${#lists.size(movements) > i ? movements[i].beforeStock : '—'}"></td>
 		                            <td th:text="${#lists.size(movements) > i ? movements[i].afterStock : '—'}"></td>
 		                            <td th:text="${#lists.size(movements) > i ? movements[i].motive : '—'}"></td>
