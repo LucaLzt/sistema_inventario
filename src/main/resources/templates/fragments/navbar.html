@@ -41,6 +41,12 @@
 	                       class="nav-link">Branches
 	                    </a>
 	                </li>
+	                <li class="nav-item">
+	                    <a th:href="@{/categories/home}" 
+	                       th:classappend="${activePage} == 'categories' ? 'active' : ''"
+	                       class="nav-link">Categories
+	                    </a>
+	                </li>
 	                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
 	                    <a th:href="@{/admins/users}" 
 	                       th:classappend="${activePage} == 'users' ? 'active' : ''"
